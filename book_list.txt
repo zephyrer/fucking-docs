@@ -1,0 +1,5 @@
+[Linux英文原版图书系列].OREILLY-Understanding_the_Linux_Kernel_Third_Edition.chm
+[Linux英文原版图书系列].CHARLES_RIVER_MEDIA-Gnu_Linux_Application_Programming.chm
+[Linux英文原版图书系列].PRENTICE_HALL-Building_Applications_With_The_Linux_Standard_Base.chm
+[Linux英文原版图书系列].PRENTICE_HALL-Linux_Debugging_and_Performance_Tuning_Tips_and_Techniques.chm
+[Linux英文原版图书系列].PRENTICE_HALL-The_Linux_Kernel_Primer_A_Top_Down_Approach_For_x86_and_PowerPC_Architectures.chm
