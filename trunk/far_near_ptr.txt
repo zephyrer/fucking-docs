@@ -1,0 +1,80 @@
+Hi all, In a generic OS , memory is organised in a segment:offset fashion. Now say,it is of "X" MB and this "X" MB is made up of say "S" number of segments of each segment having "B" Bytes where S*B Bytes=X MB.
+
+Near Pointer: A near pointer is that which will only point within the current segment say segment 3 (there are S number of segments numbered 0 to S-1) by containing only offset .
+
+Far Pointer: A far pointer is that which will point anywhere in the X MB across segments by containing segment+offset .
+
+The numbers X,S and B vary across diff operating system memory models under which you are programming .
+
+Say for MS-DOS,X=1MB;B=16 Bytes and S=1Mega Bytes/16 Bytes . Here, near poinetr will have 4 bits to express address from 0 to 16 Bytes in a segment . Here, far pointer will have "l" bits for segment part of memory where 2^l=S (Here S should be a multiple of 16 bytes i.e; B=offset memory) and 4 bits for offset part of memory . so far poinetr will have l+4 bits .
+
+Thanks Chandra
+
+Answer
+
+In DOS only 1 mb (10,48,580 bytes) of memory is accessible. Any of these memory locations are accessed using CPU registers. Under DOS the CPU registers are only 16 bits long. Therefore, the minimum value present in a CPU register could be 0, and maximum 65,535. Then how do we access memory locations beyond 65535th byte? By using two registers (segment and offset) in conjunction. For this the total memory (1 mb) is divided into a number of units each comprising 65,536 (64 kb) locations. Each such unit is called a segment. Each segment always begins at a location number which is exactly divisible by 16. The segment register contains the address where a segment begins, whereas the offset register contains the offset of the data/code from where the segment begins. For example, let us consider the first byte in B block of video memory. The segment address of video memory is B0000h (20-bit address), whereas the offset value of the first byte in the upper 32K block of this segment is 8000h. Since 8000h is a 16-bit address it can be easily placed in the offset register, but how do we store the 20-bit address B0000h in a 16-bit segment register? For this out of B0000h only first four hex digits (16 bits) are stored in segment register. We can afford to do this because a segment address is always a multiple of 16 and hence always contains a 0 as the last digit. Therefore, the first byte in the upper 32K chunk of B block of video memory is referred using segment:offset format as B000h:8000h. Thus, the offset register works relative to segment register. Using both these, we can point to a specific location anywhere in the 1 mb address space.
+
+Suppose we want to write a character `A' at location B000:8000. We must convert this address into a form which C understands. This is done by simply writing the segment and offset addresses side by side to obtain a 32 bit address. In our example this address would be 0xB0008000. Now whether C would support this 32 bit address or not depends upon the memory model in use. For example, if we are using a large data model (compact, large, huge) the above address is acceptable. This is because in these models all pointers to data are 32 bits long. As against this, if we are using a small data model (tiny, small, medium) the above address won't work since in these models each pointer is 16 bits long.
+
+What if we are working in small data model and still want to access the first byte of the upper 32K chunk of B block of video memory? In such cases both Microsoft C and Turbo C provide a keyword called far.
+
+Answer
+
+normally Pointers are 32 bit length. which are divided as segment and offset.
+
+which are represent as
+
+seg : off 0000:0000 . . . 8000:FFFF. . . . FFFF:FFFF
+
+first 4 hexa digits are segment, last 4 hexa digits are offset
+
+C Program will allocate 64KB (only one segment) memory for data Part (dynamic memory allocation, Local variables).
+
+by using 16 bit we can access that memory thats called near pointer(16 bit pointer).
+
+suppose we need more than 64KB memory to a program / we want to access a particular memory location (in TSR Program)
+
+at the time we neet 32 bit pointer. through 32 bit pointer we can access any segment and offset address.
+
+there are 2 types of 32 bit pointers 1. far pointer. 2. Huge Pointer.
+
+In TSR programming normally we use far Pointer.
+
+The Main Difference between Far and Huge Pointer is
+
+Far pointers are not Normalized.
+
+Huge pointers are Normalized.
+
+Answer
+
+First let me state this is based on my current understanding. If someone can update or improove my version I will be grateful:
+
+1.For those in hurry far simply means "its not here find it somewhere else in memory" 2. far, near and huge and not a part of the C standard( am I right?)
+
+-So the answer to this is: "It depends" Its highly compiler specific and platform(processor) specific.
+
+Different processors have different ways to handle memory, and also different amount of memory.
+
+when you say "far" you are just telling the compiler find or put this data somewhere else.But the compiler does the hard work for you: writing the instructions to change the segment properly and accessing the correct memory location for you..and that's because it knows the processor..
+
+I think previous answers are mostly related to pentium family of processors..and perhaps turbo C or similar compilers.But remember that is only one of them!
+
+Below are the examples which perhaps can have different meanings in different places:
+
+1. far int* near a; 2. far int* a; 3. far int *far a;
+
+So the best way is to try out with your compiler and find out
+
+hope that helped!
+
+    ) 
+
+Answer
+
+near and far pointer are the types of pointer's in c by using these pointers we can directly access memory to interect hardware befor starting hardware progmming in c u must know these pointers in details
+
+Huge pointers are always normalized, ie their offset-part is between 0x0 and 0x0f, and they never suffer wrap-around
+(example for wrap around:
+with far pointers 0xA000:0x9013 + 0x8000 = 0xA000:0x1013
+with huge pointers it is: 0xA901:0x0003 + 0x8000 = 0xB101:0x0003) 
