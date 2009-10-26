@@ -1,2 +1,10 @@
 C/C++ predifined macros:
 http://msdn.microsoft.com/en-us/library/b0084kay%28VS.80%29.aspx
+the yyerror function:
+http://publib.boulder.ibm.com/infocenter/zvm/v5r4/index.jsp?topic=/com.ibm.zvm.v54.dmsp4/hcsp4b10106.htm
+the function pointer tutorials:
+http://www.newty.de/fpt/index.html
+Bison 1.24 manual
+http://userpages.monmouth.com/~wstreett/lex-yacc/bison.html
+emacs config file
+http://www.caole.net/diary/emacs_setting.html

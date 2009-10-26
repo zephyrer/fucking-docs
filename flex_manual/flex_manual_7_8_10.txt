@@ -1,0 +1,323 @@
+7 输入是如何匹配的？
+当生成的扫描器运行时，它会分析它的输入并查找任何匹配其模式的字符串。若找到多个匹配，则匹配较长的那个文本（对于尾附的上下文规则，这里的长度包含尾巴的长度，纵然接下来尾巴要返回到输入中-也即该尾巴接下来也作为输入）。如果它找到两个或多个长度一样的匹配，则会选择flex输入文件的列表中的第一个（匹配）。
+
+一旦匹配确定下来，跟匹配项关联的文本（称为token）就可以在全局指针yytext中获取，并且其长度在全局整型（变量）yyleng中。接着跟匹配模式关联的action就会执行（见Action），接着剩下的输入也会被扫描并进行下一个匹配。
+
+如果没有找到匹配，则默认规则就会执行：输入中的下一个字符会被认为（跟默认规则）匹配，并将该字符拷贝到标准输出中。所以，最简单并正确的flex输入为：
+	%%
+它生成一个扫描器，简单的将其输入拷贝（每次拷贝一个字符）到标准输出中。
+
+注意，yytext可以用两种不同的方式来定义：要么是一个字符指针或一个字符数组。你可以通过在flex输入文件中的中的第一部分（即指令部分）包含两个特殊指令之一：%pointer或%array。默认情形是%pointer，除非你使用'-l'的lex兼容选项，此时，yytext就是一个数组。使用%pointer的好处是扫描的速度极快，并且在匹配非常长的标识符（tokens）时不会有缓冲区溢出（除非你的动态内存都用完了）。缺点是你修改yytext时会受限（参见Actions），并且在调用unput()函数时，会销毁之前的yytext中的内容，这会导致在不同lex版本间迁移时出现非常头疼的问题。
+
+使用%array的优点是你可以在你的heart's content中修改yytext的内容，而在调用unput()时不会销毁yytext(的内容）（参见Actions）。更甚者，已生成的lex程序有时会在外部访问yytext的内容，使用以下这种声明：
+
+    extern char yytext[];
+
+当用%pointer时，这种声明方式是错误的，但如果是%array，则可以这样声明。
+
+%array声明将yytext定义为一个长度为YYLMAX个字节的数组，YYLMAX默认为一个相当大的值。你可以在flex输入文件的第一部分通过#define语句轻易的将YYLMAX的值定义为一个不同的值。如上面提到的，用%pointer的话，yytext会动态增长，以容纳巨大的标识符。这意味着带%pointer的扫描器可以容纳非常大的标识符(tokens)（如匹配整个注释块），但记住，扫描器必须每次重新调整yytext的长度，而且必须从头重新扫描整个标识符(token)，所以匹配这样的标识符绝对会（比较）慢。现在的yytext不会动态增长了，如果unput的输出结果很长，那么这个调用会被驳回并出现一个运行时错误。
+
+同时注意，你不能在C++的扫描类中使用%array(参见Cxx)。
+
+8 行为
+规则中的每个模式都有相应的行为，它们可以是任意的C语句。模式（部分）以第一个非空空白字符作为结束；该行剩下来的部分就是该模式的行为。如果该行为为空，那么，当该模式被匹配到时，那么仅仅将输入的标识符丢弃。例如，下面是一个程序中的代码，它删除输入中出现的'zap me'：
+
+    %%
+    "zap me"
+
+这个示例将拷贝输入中所有（除"zap me"以外的）字符到输出中，因为它们会被默认模式匹配。
+
+这里是一个压缩多个空白或制表符到一个空白的程序，并且抛弃行末发现的任何空白字符：
+
+    %%
+    [ \t]+	putchar(' ');
+    [ \t]+$	/* 忽略'$'字符 */
+
+如果行为包含一个'{'字符，那么在遇到匹配的'}'之前，该行为就跨越这段空间，从而这个行为可能会跨越多行。flex能识别C的字符串和注释，并不会被其中（指字符串和注释）的花括号所愚弄，并且还允许行为以'%{'开头，并将该行为视作一个文本，直到下一个'%}'（无视该行为中的寻常花括号）。
+
+一个只由一个竖线（'|'）组成的行为意味着"该行为对下一个规则同样有效"。后面会有一个（例子）说明。
+
+行为可以包含任意的C代码，包括return语句来返回一个由某函数调用yylex()后所返回的值。每次yylex()都会被调用，以用来处理最后的那个标识符，直到它要么达到了文件尾或遇到一个return语句。
+
+行为可以自由的修改yytext的内容，但不能修改其长度（增加字符到其尾部，将会覆盖输入流中的后续字符）。但如果应用%array的话，就没有该功能(即修改yylex，见Matching)。在这种情况下，可以任意修改yytext。
+
+行为可以自由的修改yyleng，除非――如果行为同时也可以使用yymore(见下文),则行为不应该修改yyleng。
+
+有多个特殊指令可以被包含在规则内部：
+  ECHO
+    拷贝yytext(的内容)到扫描器的输出中。
+  BEGIN
+    跟在一个起始规则的后面，将扫描器置于相应起始规则的位置（参见下文）。
+  REJECT
+    指示扫描器处理“第二个”规则，该规则将匹配输入（或者是输入的前缀）。该规则会如同在Matching所描述的那样被选择，并且会正确的设置yytext和yyleng。它要么匹配尽可能多的文本，作为原来的选择规则，但只是在flex的输入文件中较晚出现，或者匹配尽可能少的文本。例如下面的（规则）将统计输入中字的个数并在看到'frob'时调用函数special()：
+        int word_count = 0;
+    %%
+    frob	special(); REJECT;
+    [^ \t\n]+	++word_count;
+在此处如果没有REJECT，任何输入中的'frob'将不会被计数为一个单词，因为扫描器一般只对一个标识符(token)执行一个动作。可以多次使用REJECT，每次（使用）都会寻找下一个最好的选择到当前的规则规则动作中。例如，当下面的扫描器扫描到标识符'abcd'时，它会将'abcdabcaba'写入到输出中：
+    %%
+    a		|
+    ab		|
+    abc		|
+    abcd	ECHO; REJECT;
+    .|\n	/*eat up any unmatched character */
+前面的三个规则共享第四个规则的行为，因为它们使用了一个特殊的行为――'|'。
+
+从扫描器性能的角度而言，REJECT是一个开销特别大的特性；如果在任何扫描器的行为中都使用该特性，那么它将减慢所有扫描器的匹配速度。更甚者，REJECT不能跟'-Cf'或'-CF'选项一起使用，参见（Scanner Options）。
+
+还需注意的是，跟其它特定的行为不同，REJECT是一个分支（译注：类似switch语句中的case分支）。行为中跟其后的代码并不会马上执行。
+
+  yymore()
+    它告诉我们扫描器下次会匹配一个规则，（该规则）相应的行为应该是附属到了当前yytext的值中，而不是取代它（译注：指当前yytext的值）。例如，给定输入'mega-kludge'，下面（的规则）会将'mega-mega-kludge'写入到输出中：
+    %%
+    mega-	ECHO; yymore();
+    kludge	ECHO;
+首先，'mega-'被匹配并输出到输出中。接着'kludge'被匹配，但是之前的'mega-'仍旧呆在yytext的开始部分，所以，'kludge'规则的ECHO（行为）实际会将'mega-kludge'写入到输出中。
+
+对于使用yymore()有两点需要注意，第一，yymore()依赖于yyleng的值，该值正确的反应了当前标识符（token）的长度。所以，在使用yymore()时绝对不能修改yyleng的值。第二，扫描器中yymore()的出现会导致匹配速度上的性能的一点点损失。
+
+  yyless(n)返回输入流中当前标识符(token)中除去前面n个字符的所有字符，当扫描器寻找下一个匹配时，这些字符将会被再次扫描。yytext以及yyleng会适当的做一些调整（比如，yyleng会和n相等）。例如，对于输入'foobar'，下面（的规则）将写入'foobarbar'到输出中：
+    %%
+    foobar	ECHO; yyless(3);
+    [a-z]+	ECHO;
+
+如果用0作为yyless()的参数，将会导致重新扫描当前输入的字符串。除非你对『扫描器将如何处理其随后的输入』做了一些修改（例如，用BEGIN），这将导致一个死循环。
+
+注意，yyless()是一个宏，你只能将其用在lex的输入文件中，而不能在其它源文件中使用它。
+
+  unput(c)
+    将字符c送回到输入中。该字符将是下一个被扫描到的字符。下面的行为将把当前标识符(token)(送到输入中)并使得它在括号中被重新扫描一遍：
+    {
+    int i;
+    /* 拷贝yytext，因为unput会损坏yytext的内容 */
+    char *yycopy = strdup(yytext);
+    unput(')');
+    for (i = yyleng - 1; i >= 0; --i)
+        unput(yycopy[i]);
+    unput('(');
+    free(yycopy);
+    }
+
+注意，由于unput()会将给定的字符置于输入流的开始部位，这个操作必须以从后面往前面的顺序来完成(译注：在上面的for循环中可以看出来)。
+
+在使用unput()时有一个严重的潜在隐患，即如果你使用了%pointer（默认选项），unput()调用将会破坏yytext的内容，（它从yytext的）最左边位置开始，每次调用都会吞噬yytext左边的一个字符。如果你需在调用unput()之后保护yytext的值（例如上例），你必须要么将其拷贝到某处，或者用%array(来取代%pointer)来编译你的扫描器（参见Matching）。
+
+最后请注意，你不能将'EOF'返送给输入流，并以此来企图将输入流标记为一个文件结束符。
+
+  input()
+    它从输入流中读取下一个字符。例如，下面的规则是一种忽略C注释的方式：
+    %%
+    "/*"	{
+    	register int c;
+	for (;;) {
+ 	    while ((c = input()) ！= ’*‘ && c != EOF)
+	    	  ;  /* 忽略输入注释文本 */
+            if (c == '*') {
+ 	       while ((c = input()) == '*')
+	          ;
+	       if (c == '/')
+	       	  break; /* 找到结束位置 */
+	    }
+	    if (c == EOF) {
+	        error("EOF in comment");
+	        break;
+            }
+	}
+    }
+
+（注意，如果扫描器使用C++来编译的话，input()会被yyinput()所取代，目的是为了避免和C++的流操作名input相冲突。)
+  YY_FLUSH_BUFFER()
+    刷新扫描器内部缓冲区，使得扫描器下次试图去匹配一个标识符（token）时，它将首先用YY_INPUT()重新填充该缓冲区(见Generated Scaner)。该行为在多个常用的yy_flush_buffer()中是个特殊情况，在下文描述（见Multiple Input Buffers）。
+  yyterminate()
+    可以用来替代一个规则中的return语句。它结束扫描器执行并返回0给扫描器调用者，暗示着“任务完成”。默认情况下，当遇到一个文件结束符时，yyterminate()也会被调用。它是一个宏，可以被重定义。
+
+
+
+
+10 起始状态
+flex提供了一种机制来有条件的启动一个规则。任何规则，如果其模式有前置的"<sc>"，那么都只有在扫描器在起始状态(start condition)sc时才会启动。例如：
+	<STRING>[^"]* {/*eat up the string body...*/...}
+
+该规则只有在扫描器(scanner)在STRING的起始状态时才会启动。再接着看下面的规则：
+
+	<INITIAL, STRING, QUOTE>\. {/* handle a escape...*/...}
+
+只有在当前起始状态为INITIAL,STRING或QUOTE之一时才会启动。
+
+起始状态在输入文件的定义部分说明，在无缩进行中，以'%s'或者'%x'开头，后面跟着一列名字。前者(指'%s')声明了包含了容他性起始状态(inclusive start condition)，后者(声明)排他性起始状态(exclusive start condition)。一个起始状态用BEGIN动作来启动。给定起始状态的规则会被激活，并且有其它起始状态的规则不会激活，直到下一个BEGIN行为执行。如果起始状态为容他的，性则全然没有起始状态的规则也会被激活。如果(性质)为排他性，则只有被标识为起始状态的规则会被激活。一系列依赖于同一个exclusive性质的start condition的规则描述了一个扫描器，它独立于flex输入文件中的任何东西。基于此，排他性的起始条件使得(我们)很容易指定一个"迷你扫描器"，它可以分割输入(数据)，进而使得(这些数据)跟输入的其它部分在语法上保持不同(例如，注释)。
+
+如果排他性和容他性的区别还是有点模糊，这里有一个简单的例子来说明这两者之间的关系。下面的这些规则：
+
+	%s example
+	%%
+	<example>foo	do_something();	
+	bar 	something_else();
+
+跟这个规则想等：
+
+	%x example
+	%%	
+	<example>foo do_something();
+	<INITIAL, example>bar something_else();
+
+如果没有<INITIAL, example>标识符，第二个例子中的bar模式就不会在起始状态的example中被激活(也即不会匹配)。但如果只是用<example>来标识bar，那么bar也会在example中被激活，但不会在INITIAL中激活，但是在第一个例子中，两者都会被激活，因为在示例一中，example的起始状态为容他性(%s)的。
+
+另外注意到，特殊的起始状态标识符<*>会匹配任何起始状态。所以，上面的例子也可以这样写：
+
+	%x example
+	%%
+	<example>foo do_something();
+	<*>bar	something_else();
+
+默认规则(对ECHO而言就是任何未匹配字符)在起始状态中保持激活(状态)。它跟下面(的代码)等价：
+
+	<*>.|\n		ECHO
+
+BEGIN(0)会返回到原始状态，在那里，规则们不希望有起始状态为激活(状态)。这个状态也可以被称为开始-状态INITIAL，所以BEGIN(INITIAL)跟BEGIN(0)等价。(包含起始状态的括号并不是必须的，但是这是良好的(代码)风格。)
+
+BEGIN行为也可以在规则部分的开头以缩进代码的形式给出。例如，下面的(代码)将导致扫描器在每次调用yylex()以及全局变量enter_special为true时进入SPECIAL这个起始状态：
+
+	int enter_special;
+	%x SPECIAL
+	%%
+		if (enter_special)
+			BEGIN(SPECIAL);
+	<SPECIAL>blahblahblah
+	... more rules follow ...
+
+为说明起始状态的使用，这里有个扫描器，它对形如'123.456'的字符串提供2个不同的解释。默认情况下，它(指扫描器)会把字符串看作三个标识符，即整数'123'，一个点('.')以及整数'456'。但是如果该字符串在先前的代码行中用'expect-floats'作为前缀,那么扫描器会将其当作一个标识符，即一个浮点数'123.456'：
+
+	%{
+	#include <math.h>
+	%}
+	%s expect
+	%%
+	expect-float	BEGIN(expect);
+	<expect>[0-9]+@samp{.}[0-9]+ {
+		printf("found a float, = %f\n", atof(yytext));
+	}
+	<expect>\n	{
+			/* 这是行尾，所以在识别
+			 * 更多的数字之前，我们
+			 * 需要另一个"expect-number"
+			 */
+			BEGIN(INITIAL);
+	}
+	[0-9]+	{
+		printf("found an integer, = %d\n", atoi(yytext));
+	}
+	"."	printf("found a dot\n");
+
+下面是一个扫描器，当在统计当前输入文件的行数时，它识别(并丢弃)C注释：
+
+	%x comment
+	%%
+	int line_num = 1;
+	"/*"	BEGIN(comment);
+	<comment>[^*\n]*	/*匹配除'*'以外的任何内容*/
+	<comment>"*"+[^*/\n]*	/*匹配后面没有跟'/'的'*' */
+	<comment>\n		++line_num;
+	<comment>"*"+"/"	BEGIN(INITIAL);
+
+这个扫描器在匹配更多的文本以及规则时，会遇到麻烦。一般而言，当你想写一个高速的扫描器时，尽可能在每个规则中多匹配一些内容，这样才是大赢家。
+
+注意到，开始-状态(start-condition)的名字实际上是整数值，而且它也可以(以整数来)来存储。所以，上面(的代码)可以扩展为一下形式：
+
+	%x comment foo
+	%%
+		int lint_num = 1;
+		int comment_caller;
+	"/*"	{
+		comment_caller = INITIAL;
+		BEGIN(comment);
+	}
+	...
+	<foo>"/*"	{
+		comment_caller = foo;
+		BEGIN(comment);
+	}
+	<comment>[^*\n]*	/*匹配除'*'以外的任何内容*/
+	<comment>"*"+[^*/\n]*	/*匹配后面没有跟'/'的'*' */
+	<comment>\n		++line_num;
+	<comment>"*"+"/"	BEGIN(INITIAL);
+
+更进一步，你可以用宏YY_START的整数值来访问(access)起始状态。例如，上面对comment_caller的赋值可以改写为：
+
+	comment_caller = YY_START;
+
+FLEX为YY_START提供了一个别名YYSTATE(因为YYSTATE在AT&T的lex中使用)。
+
+由于历史原因，起始状态在生成的扫描器中并没有自己的命名空间。起始状态的值在生成的扫描器和头文件中不金额修改。参见option-header，option-prefix。
+
+最后，下面的例子是一个使用排他性起始状态的C风格的注释字符串，包括扩展的空白串(但并未对过长的字符串进行检查)：
+
+	%x str
+	%%
+		char string_buf[MAX_STR_CONST];
+		char *string_buf_ptr;
+	
+	\"	string_buf_ptr = string_buf; BEGIN(str);
+	<str>\"	{/* saw closing quote - all done */
+		BEGIN(INITIAL);
+		*string_buf_ptr = '\0';
+		/* 返回字符串常量标识以及其值给解析器 */
+	}
+	<str>\n	{
+		/* error - unterminated string constant */
+		/* generate error message */
+	}
+	<str>\\[0-7]{1,3} {
+		/* octal escape sequence(八进制字符) */
+		int result;
+		(void) sscanf(yytext + 1, "%o", &result);
+		if (result > 0xff){
+			/* error, constant is out-of-bounds */
+		}
+		*string_buf_ptr++ = result;
+	}
+	<str>\\[0-9]+	{
+		/* generate error - bad escape sequence; something like
+		 * '\48' or '\0777777'
+		 */
+	}
+	<str>\\n	*string_buf_ptr++ = '\n';
+	<str>\\t	*string_buf_ptr++ = '\t';
+	<str>\\r	*string_buf_ptr++ = '\r';
+	<str>\\b	*string_buf_ptr++ = '\b';
+	<str>\\f	*string_buf_ptr++ = '\f';
+	<str>\\(.|\n) *string_buf_ptr++ = yytext[1];
+	<str>[^\\\n\"]+	{
+		char *yptr = yytext;
+		while (*yptr)
+			*string_buf_ptr++;
+	}
+	
+通常，如上例子中的一些规则，你不想用同一个起始状态写一堆规则。FLEX中有一个起始状态范围的标记让这一切变得简单而整洁。一个起始状态范围以'<SCs>'{作为开始，这里的SCs是一个或多个起始状态。在起始状态作用域内，每个规则的前面都会有一个'SCs>'前缀，直到遇到一个跟起始的'{'匹配的'}'(即作用域结束符)，所以，对于例子:
+	
+	<ESC>{
+             "\\n"   return '\n';
+             "\\r"   return '\r';
+             "\\f"   return '\f';
+             "\\0"   return '\0';
+         }
+它等价于
+	 <ESC>"\\n"  return '\n';
+         <ESC>"\\r"  return '\r';
+         <ESC>"\\f"  return '\f';
+         <ESC>"\\0"  return '\0';
+
+起始状态作用域可以(被)嵌套。
+
+下面的函数可以用来操作起始状态栈：
+——void yy_push_state(int new_state)
+	将当前的起始状态压入起始状态栈的栈顶并转到new_state，就如同你已经使用BEGIN(new_state)一样(回忆起始状态名字也可以是整数)。
+
+——void yy_pop_state()
+弹出起始状态栈的栈顶并通过BEGIN转入被弹的起始状态。
+
+——int yy_top_state()
+不改变栈内容(的前提下)将栈顶(元素)返回。
+
+起始状态栈是动态增长的，所以没有内建的空间限制。如果内存耗尽，程序会退出执行。
+
+若要使用起始状态栈，在扫描器中必须包含一个%option stack指令(参见Scanner Options)。
