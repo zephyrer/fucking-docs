@@ -1,0 +1,21 @@
+$Programming by Coincidence$
+#1  Sometimes it can be pretty easy to confuse a happy coincidence with a purposeful plan.
+#2  For routines you call, rely on documented behavior. If you can't, for whatever reason, then document you assumption 
+    well.
+    这点在PG的代码中经常可以看到，对于一些代码的假设，在注释中经常被提到。这使得调用者非常谨慎的处理一些特殊情况，并且做到心里有底.
+#3  don't assume it, prove it...Assumptions that aren't based on well-established facts are the bane of all projects.
+    在#2中,对代码做相应假设时，自己之前应该是做过相应测试来证明这些假设。
+#4  if you can't tell the difference in particular circumstances, assumption the worst.
+    对于自己不确定的情形，网最坏里想，最最坏的准备。
+#5  Don't just test your code, but test your assumption as well.Don't guess;actually try it. Write an assertion to test your
+    assumption in your code. If you discover your assumotion is wrong, then count yourself lucky.
+    要真将自己的假设证明是错误的，这还得靠运气。
+#6  Prioritize your effort. Spend time on the important aspects; more than likely, these are the hard parts. If you don't
+    have fundamentals or infrastructure correct, brilliant bells and whistles will be irrelevant.
+    将力气花在刀刃上。如果根基不稳，再花哨的伎俩都于事无补。
+#7  Don't be a slave to history. Don't let existing code dictate future code. All code can be replaced if it is no longer
+    appropriate. Even within one program, don't let what you've already done constrain what you do next - be ready to 
+    refactor. This decision may impact the project schedule. The assumption is that the impact will be less than the cost
+    of not making the change.
+    很多时候自己的代码都对现有代码有很高的依赖性，自己不敢多加修改。
+

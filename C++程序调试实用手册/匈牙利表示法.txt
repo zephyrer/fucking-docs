@@ -1,0 +1,129 @@
+/*************************************
+ * MFC、句柄、控件及结构的命名规范
+ *************************************
+ */
+Windows类型		样本变量	MFC类		样本对象
+HWND			nWnd		CWnd		pWnd			/* 窗口 */
+HDLG			hDlg		CDialog		pDlg			/* 对话框 */
+HDC				hDC			CDC			pDC				/* device context*/
+HGDIOBJ			hGdiObj		CGdiObject	pGdiObj			/* graphics device interface */
+HPEN			hPen		CPen		pPen			/* 画笔? */
+HBRUSH			hBrush		CBrush		pBrush			/* 画刷? */
+HFONT			hFont		CFont		pFont			/* 字体? */
+HBITMAP			hBitmap		CBitmap		pBitmap			/* 位图? */
+HPALETTE		hPalette	CPalette	pPalette		/* 调色板 */
+HRGN			hRgn		CRgn		pRgn			/* about region? */
+HMENU			hMenu		CMenu		pMenu			/* 菜单 */
+HWND			hCtl		CState		pState
+HWND			hCtl		CButton		pButton			/* 按钮 */
+HWND			hCtl		CEdit		pEdit			/* 可编辑区域? */
+HWND			hCtl		CListBox	pListBox		/* 下拉框? */
+HWND			hCtl		CComboBox	pComboBox		/* 组合框? */
+HWND			hCtl		CScrollBar	pScrollBar		/* */
+HSZ				hszStr		CString		pStr			/* 字符串相关 */
+POINT			pt			CPoint		pt
+SIZE			size		CSize		size
+RECT			rect		CRect		rect			/* 矩形 */
+
+/*************************************
+ * 一般前缀命名规范
+ *************************************
+ */
+前缀	类型		实例
+C		类或结构	CDocument, CPrintInfo
+m_		成员变量	m_pDoc, m_nCustomers
+
+/*************************************
+ * 变量命名规范
+ *************************************
+ */
+前缀	类型		描述						实例
+ch		char		8位字符						chGrade
+ch		TCHAR		如果_UNICODE定义			chName
+					则为16位字符
+b		BOOL		布尔值						bEnabled
+n		int			整型(大小依赖平台)			nLength
+n		UNIT		无符号值(大小依赖平台)		nLength
+w		WORD		16位无符号值				wPos
+l		LONG		32位有符号整型				lOffset
+dw		DWORD		32位无符号整型				dwRange
+p		*			指针						pDoc
+lp		FAR *		远指针						lpDoc
+lpsz	LPSTR		32位字符串指针				lpszName
+lpsz	LPCSTR		32位常量字符串指针			lpszName
+lpsz	LPCTSTR		若_UNICODE定义，为			lpszName
+					32位常量字符串指针
+h		handle		Windows对象句柄				hWnd
+lpfn	callback	指向CALLBACK函数的远指针	lpfnAbort
+
+/*************************************
+ * 应用程序符号命名规范
+ * MS在Windows应用程序中使用下表的符号常量前缀
+ *************************************
+ */
+前缀	符号类型					实例					范围
+IDR_	不同类型的多个资源共享标识	IDR_MAINFRAME			0x01~0x6fff
+IDD_	对话框资源					IDD_SPELL_CHECK			0x01~0x6fff
+HIDD_	对话框资源的Help上下文		HIDD_SPELL_CHECK		0x20001~0x26ff
+IDB_	位图资源					IDB_COMPANY_LOGO		0x01~0x6fff
+IDC_	光标资源					IDC_PENCLE				0x01~0x6fff
+IDI_	图标资源					IDI_NOTEPAD				0x01~0x6fff
+ID__	来自菜单项或工具栏的命令	ID_TOOLS_SPELLING		0x8000~0xdfff
+HID_	命令Help上下文				HID_TOOLS_SPELLING		0X18000~0x1dfff
+IDP_	消息框提示					IDP_INVALID_PARTNO		0x08~0xdfff
+HIDP_	消息框Help上下文			HIDP_INVALID_PARTNO		0x30008~0x3dfff
+IDS_	串资源						IDS_COPYRIGHT			0x01~0x7fff
+IDC_	对话框内的控件				IDC_RECALC				0X08~0Xdfff
+
+/*************************************
+ * MS MFC宏命名规范
+ *************************************
+ */
+名称		类型
+_AFXDLL		唯一的DLL版本
+_ALPHA		仅编译DEC Alpha处理器
+_DEBUG		包括诊断的调试版本
+_MBCS		编译多字节字符集
+_UNICODE	在一个应用层序中打开Unicode
+AFXAPI		MFC提供的函数
+CALLBACK	通过指针回调的函数
+
+/*************************************
+ * 库标识符命名规范
+ *************************************
+ */
+指示符	值和含义
+u		ANSI(N)或Unicode(U)
+d		调试或发行：D=调试；忽略指示符为发行
+
+/*************************************
+ * 静态库版本命名规范
+ *************************************
+ */
+库				描述
+NAFXCWD.LIB		调试版本：MFC静态链接库
+NAFXCW.LIB		发行版本：MFC静态链接库
+UAFXCWD.LIB		调试版本：具有UNICODE支持的MFC静态链接库
+UAFXCW.LIB		发行版本：具有UNICODE支持的MFC静态链接库
+
+/*************************************
+ * 动态连接库命名规范
+ *************************************
+ */
+名称		类型
+_AFXDLL		唯一的动态连接库版本
+WINAPI		Windows所提供的函数
+
+/*************************************
+ * windows.h使用的命名规范
+ *************************************
+ */
+类型定义		描述
+WINAPI			使用在API声明中的FAR PASCAL位置。如果正在编写一个具有导出API入口的DLL，则可以在自己的API中使用该类型.
+CALLBACK		使用在应用层序的回调中，如窗口和对话框过程中的FAR PASCAL位置
+LPCSTR			与LPSTR相同，只是LPCSTR用于只读串指针，其定义类似于(const char FAR *)
+UNIT			可移植的无符号整型类型，其大小由主机环境决定(对windows NT和Windows 95为32位)它是unsigned int的同义词，使用在WORD的位置，在一个32位平台上希望得到一个16位无符号值的极少数情况除外。
+LRESULT			窗口程序返回值的类型
+LPARAM			声明IParam所使用的类型，IParam是窗口程序的第四个参数
+WPARAM			声明WParam所使用的类型，wParam是窗口程序的第三个参数(一种组合数据类型)
+LPVOID			一般的指针类型，与(void *)等同。应该使用它来代替LPSTR
