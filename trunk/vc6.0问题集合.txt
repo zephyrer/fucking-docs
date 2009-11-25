@@ -1,1 +1,2 @@
 如果release版本一直改不过来，直接在build/configuration里面将release删除即可，这样就可以编译调试『汇编代码』了.
+更好的办法是build/set active configuration，可在里面自由选择release和debug。

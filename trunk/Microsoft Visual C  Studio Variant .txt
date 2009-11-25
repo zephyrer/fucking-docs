@@ -1,0 +1,48 @@
+##### Microsoft Visual C / Studio Variant #####
+# for the different Studios, see: http://en.wikipedia.org/wiki/Microsoft_Visual_Studio
+# only one of the following MSVC_VARIANT settings should be used
+# BTW: The "Microsoft Visual C++ Toolkit 2003" DOESN'T WORK for WS!
+
+# "Microsoft Visual Studio 6.0"
+# Visual C++ 6.0, _MSC_VER 1200, msvcrt.dll (version 6)
+#MSVC_VARIANT=MSVC6
+
+# "Microsoft Visual Studio .NET (2002)"
+# Visual C++ 7.0, _MSC_VER 1300, msvcr70.dll
+#MSVC_VARIANT=MSVC2002
+
+# "Microsoft .Net Framework SDK Version 1.0"
+# needs additional Platform SDK installation
+# Visual C++ 7.0, _MSC_VER 1300, msvcr70.dll
+#MSVC_VARIANT=DOTNET10
+
+# "Microsoft Visual Studio .NET 2003"
+# Visual C++ 7.1, _MSC_VER 1310, msvcr71.dll
+#MSVC_VARIANT=MSVC2003
+
+# "Microsoft .Net Framework SDK Version 1.1"
+# needs additional Platform SDK installation
+# Visual C++ 7.1, _MSC_VER 1310, msvcr71.dll
+#MSVC_VARIANT=DOTNET11
+
+# "Microsoft Visual Studio 2005"
+# Visual C++ 8.0, _MSC_VER 1400, msvcr80.dll
+#MSVC_VARIANT=MSVC2005
+
+# "Microsoft Visual C++ 2005 Express Edition"
+# needs additional Platform SDK installation
+# Visual C++ 8.0, _MSC_VER 1400, msvcr80.dll
+#MSVC_VARIANT=MSVC2005EE
+
+# "Microsoft .Net Framework 2.0 SDK"
+# needs additional Platform SDK installation
+# Visual C++ 8.0, _MSC_VER 1400, msvcr80.dll
+#MSVC_VARIANT=DOTNET20
+
+# "Microsoft Visual Studio 2008"
+# Visual C++ 9.0, _MSC_VER 1500, msvcr90.dll
+MSVC_VARIANT=MSVC2008
+
+# "Microsoft Visual C++ 2008 Express Edition"
+# Visual C++ 9.0, _MSC_VER 1500, msvcr90.dll
+#MSVC_VARIANT=MSVC2008EE
