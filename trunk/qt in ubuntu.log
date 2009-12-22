@@ -1,0 +1,36 @@
+Code Ghar
+Qt4 Programming in Ubuntu
+Posted in configuration by hs on February 1, 2009
+
+I am beginning to go in the direction I had mentioned previously on this blog: using Debian as server and Ubuntu as desktop. To learn how to do Qt programming, I decided to install Kubuntu in a virtual machine. So I grabbed Kubuntu Intrepid and installed it in VMware. But I just didn¡¯t feel comfortable using KDE 4.x. So I installed Ubuntu. Programming should not be a problem; I just don¡¯t know (yet) how to run my own Qt-based application in Gnome. By just running the application once it¡¯s compiled, it works; you don¡¯t need to install anything else (as far as I know). So far I have installed build-essential, libqt4-dev, libqt4-dev-tools, and qt4-designer.
+
+sudo aptitude install build-essential libqt4-dev libqt4-dev-tools qt4-designer
+
+As I start to program, I will provide updates. To learn Qt programming, I will be using the following resources: How To Create a Linux Desktop App In 14 Minutes For Beginners (Using QDevelop and Qt4); C++ GUI Programming with Qt 4; Introduction to Design Patterns in C++ with Qt 4;
+
+To setup my environment, I chose to create a folder for each exercise I would be doing. For example, if it was my first exercise, I did the following:
+
+mkdir /home/me/exr1
+cd /home/me/exr1
+
+I also use vim as my editor. So I followed a simple formula: all exercises in their own folders, and each exercise¡¯s main() function in main.cpp. So I created a main.cpp file in exr1 directory.
+
+vim exr1.cpp
+
+Once you have written your code and want to compile and run it, do the following steps:
+
+qmake -project (create a project file)
+qmake (create a make file appropriate for your system, which is Ubuntu in this case)
+make (compile your project using the make file created in previous step)
+./exr1 (run the application)
+
+Since after every change I would have to run the above commands again and again, I created an alias for them in bash.
+
+vim /home/me/.bashrc
+
+And add the following line to the .bashrc file
+
+alias runexr1="cd /home/me/exr1/; qmake -project; qmake; make; ./exr1;"
+
+I opened a new terminal window so that the new alias is now available. And each time I would just run runexr1 after making changes to the file. It would not only do all the compilations, but also execute the application.
+Tagged with: ubuntu 
