@@ -1,0 +1,298 @@
+安裝GNU包
+  %gnuzip foo-1.0.tar.gz
+  %tar xf foo-1.0.tar
+  1. 查看foo-1.0目錄中的'README',看是否有其它的事情需要做.
+  2. 配置源碼.現在可以用autoconf來生成'configure'文件.
+    % ./configure
+  3. 編譯源碼
+    % cd foo-1.0
+    % make
+  4. 如果順利,安裝
+    % su
+    # make install
+
+  make對自己實際所做的工作并不知道,它讀取makefile文件中的指令,并通過shell來執行.在安裝
+  者的角度來看,makefile定義了一個目標集.
+
+  configure程序是一個shell腳本,用來探測整個系統,然后探測結果根據'Makefile.in'來生成
+  Makefile. 現在'configure'腳本可以通過GNU的Autoconf來完成,通過輸入'configure.in',
+  可以生成相應的configure文件.
+
+  你也不必手寫'Makefile.in'文件,可以使用GNU的Automake來生成它,通過編寫'Makefile.am'
+  文件.在這些文件中,你描述了你的源碼要生成的一些文件,然后Automake會生成makefile用來編
+  譯、安裝以及卸載.
+
+Makefile標準
+  GNU編碼標準中描述了所有GNU程序所要達到的一些標準.Makefile標準是其中的一部分.
+  clean:
+    有3種類型的clean操作： clean, distclean和maintainer-clean
+    clean: 清除所有由make以及make check生成的文件,但是不清除由configure生成的文件.
+    
+    distclean: 清除所有由make以及make check生成的文件,同時也清除由configure生成的文
+    件.如果你不再次configure,那么你將不能調用任何make例程.此時源碼樹回復到第一次解壓
+    時的狀態.
+    
+    maintainer-clean: 清除所有distclean可以清除的文件,同時也清除開發者automake生成
+    的文件.由于用戶并不需要GNU編譯系統來安裝軟件包,所以這些文件必須得清除.有時維護者也
+    需要清除這些文件并重新生成.
+
+    另一種清除就是擦除安裝目錄中的安裝包:
+      % make uninstall
+    
+    How to remembering?
+    If configure or make did it, make distclean undoes it.
+    If make did it, make clean undoes it.
+    if make install did it, make uninstall undoes it.
+    If you did it, make maintainer-clean undoes it.
+
+    GNU的makefile還有一個目標文件,即tags,它是一些文件,Emacs用這些文件可以高效的瀏覽
+    源碼.通過以下命令來生成tag文件:
+      % make tags
+    當你不是源碼的作者時,tags對于你了解源碼非常有幫助
+
+    為發布你更改后的軟件(意為 make distribution)：
+      % make dist
+    它會重新編譯foo-1.0.tar.gz,如果你對源碼做了更改,那么這些修改將被包含進來(此時你可
+    能需要修改版本號).在將新版本發布到FTP之前,可以先測試其完整性:
+      % make distcheck
+    它會將新版本解壓到一個臨時目錄中,并嘗試configure, build,運行測試用例,并測試安裝腳
+    本是否能正確工作.如果一切正常,那么你將被告知你的新版本可以發布了.
+
+Configuration選項
+	Executables   ==> /usr/local/bin
+	Libraries     ==> /usr/local/lib
+	Header files  ==> /usr/local/include
+	Man pages     ==> /usr/local/man/man?
+	Info files    ==> /usr/local/info
+
+  '/usr/local'稱為prefix,默認的前綴為'/usr/local',但是可以在configure文件中通過
+  '--prefix'來設置,例如,如果你不是超級用戶,那么你將不能在'/usr/local'中安裝任何東西,
+  此時你可以將軟件安裝在'/home/username'中:
+    % ./configure --prefix=/home/username
+    % make
+    % make check
+    % make install
+  
+  如果你在一个文件系统上安装了软件包,并且想在多个机器(运行GNU或者UNIX)上共享,那么你需要
+  安装一些不依赖于系统的文件到一个共享目录中.头文件和文档是可以共享的,但是libraries和
+  executables就必须分别安装,解决方案如下:
+    Executables   ==> /usr/local/system/bin
+    Libraries     ==> /usr/local/system/lib
+    Header files  ==> /usr/local/include
+    Man pages     ==> /usr/local/man/mann
+    Info files    ==> /usr/local/info
+
+  '/var/local/system'叫做executable prefix,通常它是prefix的子目录.如果不指定
+  executable prefix,那么会默认为prefix目录.为改变这一状况,使用
+    --exec-prefix
+  标志来指定相关目录.例如,为GNU/Linux系统的configure为:
+    % configure --exec-prefix=/usr/local/linux
+  为GNU/Hurd的configure为:
+    % configure --exec-prefix=/usr/local/hurd
+
+  通常,一个软件包可能想要安装在很多不同的目录.有些目录是通过prefix来控制的,但是有些
+  是通过executable prefix来控制,参见【Installation standard directories】.
+
+  有些安装包允许你启用或禁用某些功能,这些标志为:
+    --with-package --enable-feature
+    --without-package --disable-feature
+  --enable标记通常用来启用软件包的某些功能,比如语言国际化,调试功能以及共享库等特性通常
+  都由这些选项来控制.--with标志则控制安装过程是否包含安装包中的可选组建或包.特定软件的标
+  记会在README中加以说明.
+
+  configure脚本还可以传递环境变量进去.例如,在configure中可以决定用哪种编译器以及传递哪	
+  个标记等等,你可以推翻configure中的设定,比如通过CC标记和CFLAGS标记.例如假定你想编译一
+  个最优化的软件包并且不带有任何调试信息(bad idea, yet people want to do it):
+    % export CFLAGS="-O3"
+    % ./configure
+
+  为告诉configure使用系统自带的编译器(而不是gcc),并且编译一个未优化的调试版本:
+    % export CC="cc"
+    % export CFLAGS="-g"
+    % ./configure
+
+  这里假定你使用的是bash,并且是默认的shell.如果使用csh或tcsh,需要setenv对环境变量赋
+  值:
+    % setenv CFLAGS "-O3"
+    % ./configure
+
+  CXX, CXXFLAGS控制着C++编译器
+  
+Doing a VPATH build
+在一個vpath編譯中,源碼存儲在一個(可能)只讀的目錄中,而實際的編譯則在一個不同的目錄中,并(在該目錄中)存儲所有生成的文件.第一個目錄我們稱之為source tree,第二個稱之為build tree,而后者可能是前者的子目錄,但最好將它們分離在不同的目錄中.
+
+如果開發者采用了GNU編譯系統的標準功能,那么你不必擔心對vpath編譯的支持.但如果自己定義make規則,那么就需要做相應的轉變來使得vpath正確工作.
+
+大部分的UNIX make組建不支持vpath編譯,GNU則使得它相當具有移植性,如果vpath對你來說比較重要,那么沒有理由不安裝它.
+
+假定'/source/foo-0.1'包含一個源碼包,而你想在目錄'/build/foo-0.1'中編譯它.假定2個目錄都存在,你所要做的事情就是:
+	% cd /build/foo-0.1
+	% /source/foo-0.1/configure …options…
+	% make
+	% make check
+	% su
+	% make install
+接下來的事情就留給configure腳本以及生成的makefiles來處理.
+
+很多人偏愛vpath編譯的理由如下:
+阻止編譯過程會擾亂源碼樹,給其添加各種編譯文件(在MS系列的編譯器中,會添加很多生成文件在源碼樹中).
+移除編譯時,所要做的工作僅僅是針對編譯目錄.
+可以在不同的目錄中多次編譯同一個源碼樹.對于有多個configure版本(不同功能,不同編譯優化等等)的軟件包,可以編譯多個版本來運行測試用例.
+通常,如果一個源碼包是用vpath來編譯的,那么它也是被正常編譯出來的,但反過來則不然,這也是為何要用distcheck target來檢查完整性的原因,它會檢查你的發布是否被正確的vpath編譯過.
+
+Making a binary distribution
+在編譯之后,安裝之前,你可以對生成的文件做一些快照(snapshot)并將其打包起來:
+為創建一個二進制包:
+	# make install DESTDIR=/tmp/dist
+	# tar –C /tmp/dist –cvf package-version.tar
+	# gzip -9 package-version.tar
+DESTDIR指定了一個目錄.
+
+Programming with many source files
+目標文件'*.o'包含了變量以及子例程的定義(以匯編的形式).這些定義中的大部分最終將被嵌入到最終的可執行文件的特定地址中.在未鏈接之前,這些內存地址是未知的,所以它們以符號(symbolically)的形式來引用,這些符號的引用稱作symbols.可以通過'nm'命令來列出目標文件中定義的符號,例如:
+	% nm xmalloc.o
+				 U error
+				 U malloc
+				 U realloc
+		00000000 D xalloc_exit_failure
+		00000000 t xalloc_fail
+		00000004 D xalloc_fail_func
+		00000014 R xalloc_msg_memory_exhausted
+		00000030 T xmalloc
+		00000060 T xrealloc
+第一列是符號在目標文件中的地址(如果符號在目標文件中確實定義了),第二列是變量的類型,第三列是變量名.
+‘T' – 函數定義
+‘t' – 私有(private)函數定義,在C中為static聲明的函數.
+‘D' – 全局變量
+‘R' – 只讀全局變量(const)
+‘U' – 在目標文件中使用但并未在其中定義的符號
+更多信息,參見Binutils manual
+
+During the process of linking, all the machine language instructions that refer to a specific memory address need to be modified to use the correct addresses within the executable, as oppposed to the addresses within their object file. This becomes an issue when you want to your program to load and link compiled object files during run-time instead of compile-time. To make such dynamic linking possible, your symbols need to be relocatable. This means that your symbols definitions must be correct no matter where you place them in memory. There should be no memory addresses that need to be modified. One way to do this is by refering to memory addresses within the object file by giving an offset from the refering address. Memory addresses outside the object file must be treated as interlibrary dependencies and you must tell the compiler what you expect them to be when you attempt to build relocatable machine code. Unfortunately some flavours of Unix do not handle interlibrary dependencies correctly. Fortunately, all of this mess can be dealt with in a uniform way, to the extent that this is possible, by using GNU Libtool. See section Using Libtool, for more details.
+
+編譯庫文件
+在很多情況下,一個邏輯單元中的目標文件可能會被多個可執行文件使用.在Unix系統和GNU中,可以搜集這些目標文件形成一個libraray.在GNU系統中,用'ar'命令來創建一個庫文件:
+	ar cru libfoo.a foo1.o foo2.o foo3.o
+
+該命令會用目標文件foo1.o foo2.o foo3.o來生成一個libfoo.a文件.在使用libfoo.a之前,需要另一個程序來檢查這個庫文件:
+	% ranlib libfoo.a
+
+在GNU以及大部分Unix系統中,你需要做這個工作,即運行'ranlib',但在有些Unix系統上卻不是必須的,甚至在SGI的Irix系統上,壓根就沒有這個命令.
+
+之所以強調這個是因為歷史原因.ar命令最原始的功能僅僅只是將文件打包在一起.tar命令是由ar命令派生而來,用來將這些打包的文件存放到磁帶設備上.現如今,tar命令就用來干ar原來的工作,有些人甚至想用tar來打包*.o文件.但是連接器需要一個符號表來傳遞這些存檔文件,所以ranlib就用來生成這個符號表并將其添加到*.a文件中.
+
+為將library安裝到系統中,先得將文件'libfoo.a'放到一個標準目錄中.實際的這個目錄跟你的系統相關.GNU編譯器會在'/usr/lib'和'usr/local/lib'中查找安裝目錄.因為很多Unix系統也使用GNU的編譯器,所以這些目錄在Unix系統中是標準安裝目錄.但還是有些Unix編譯器并不默認在'usr/local/lib'中查找.一旦安裝了一個library,該庫的子例程就能為多個工程(處于當前目錄)所用,以用來編譯一個可執行文件.可以用'-l'標志來讓編譯器指向一個庫安裝目錄,以將多個可執行文件編譯成一個可執行文件:
+	% gcc –o foo bar.o –lfoo
+
+要注意的是,如果庫文件名為'libfoo.a',那么相應的'-l'標準的參數就只能是子字符串'boo',所以上例中為'-lfoo'.庫文件必須以'lob*.a'的形式來命名.如果你已將'libfoo.a'安裝到了一個非標準目錄,你可以用'-L'標記告訴鏈接器到該目錄中來查找該庫文件.例如,如果庫文件安裝在'/home/lf/lib'中:
+	% gcc –o bar.o –L/home/lf/lib –lfoo
+
+‘-L'標記必須在'-l'標記之前.
+
+Some people like to pass `-L.' to the compiler so they can link uninstalled libraries in the current working directory using the `-l' flag instead of typing in their full filenames. 	The idea is that they think "it looks better" that way. Actually this is considered bad style. You should use the `-l' flag to link only libraries that have already been installed and use the full pathnames to link in uninstalled libraries. The reason why this is important is because, even though it makes no difference when dealing with ordinary libraries, it makes a lot of difference when you are working with shared libraries. (FIXME: Crossreference). It makes a difference whether or not you are linking to an uninstalled or installed shared library, and in that case the `-l' semantics mean that you are linking an installed shared library. Please stick to this rule, even if you are not using shared libraries, to make it possible to switch to using shared libraries without too much hassle.
+
+Also, if you are linking in more than one library, please pay attention to the order with which you link your libraries. When the linker links a library, it does not embed into the executable code the entire library, but only the symbols that are needed from the library. In order for the linker to know what symbols are really needed from any given library, it must have already parsed all the other libraries and object files that depend on that library! This implies that you first link your object files, then you link the higher-level libraries, then the lower-level libraries. If you are the author of the libraries, you must write your libraries in such a manner, that the dependency graph of your libraries is a tree. If two libraries depend on each other bidirectionally, then you may have trouble linking them in. This suggests that they should be one library instead!
+
+Dealing with header file
+一般來說,一個library有2種類型的頭文件：public和private.前者聲明了一些你需要從其他軟件中獲取的資源,後者所聲明的資源就是為library自身打造的(也就是#include <> 和#include “”的區別…).要使用一個安裝好的庫,還需要安裝其公有的頭文件.標準的頭文件安裝目錄為'/usr/include'.GNU編譯器也可以識別'/usr/local/include'.當編譯器遇到以下指令:
+	#include <foo.h>
+
+編譯器會在標準目錄中查找'foo.h',如果你將頭文件安裝在【非標準目錄】中,可以通過'-I'標誌告訴編譯器具體的查找目錄.例如,若要從原始文件'bar.c'編譯一個'bar'程式,原始文件中包含了安在在'/home/username'中的library:
+	% gcc –c –I/home/lf/include bar.c
+	% gcc –o bar bar.o –L/home/lf/lib –lfoo
+
+也可以一步完成:
+	% gcc –I/home/lf/include –o bar bar.o –L/home/lf/lib –lfoo
+
+為移植性考慮,最好將'-I'置于要編譯的源文件之前.
+
+Makefile相關
+格式:
+	TARGET: DEPENDENCIES
+	TAB COMMAND
+	TAB ……
+	TAB ……
+	[BLANK LINE]
+
+TAB是強制性(mandatory)的,最后的空行最好保留,以兼容Unix(在GNU make可去掉).
+
+target可以是生成的文件名,也可以是一个可执行的动作名(action name).
+dependency为一个文件,作为输入文件,创建一个target,如果一个targe有多个依赖文件, 那么必须以空格分开,同时也得保证它们位于同一行.target有可能没有依赖文件,那么此 时':'后面的空格必须为空(即':'后不能有空格...Makefile的语法真变态_Orz).
+Target后面的commands全面必须以TAB开头,如果target为一个文件,那么该命令即解释如何来创建该文件,如果target为一个action,那么command则描述这个action.这些command都是一些常用的shell命令.
+
+调用'make'时,必须告诉它你想要编译的target,若不指定,则'make'会编译在makefile中出现的第一个目标文件.
+
+我们所提及的用'make'命令来编译一个target,即希望'make'做以下这些事情:
+编译dependencies.如果一个dependencies为一个你自己创建的文件(file),那么这意味着什么也不干.如果一个dependency为一个makefile中定义的目标,那么将编译该target.循环进行这2个步骤.
+如果任何一个dependency比target'新',或者target这个文件根本不存在,那么command将创建该文件,如果target为一个action,那么command不会创建任何文件,但会执行该action.
+如果target是一个文件，并且当前没有更'新'的dependency存在，那么'make'将什么都不干，但会打印一个消息说【无事可干】。如果target为一个action，且没有文件的名称会跟target的名称(即action名称)相同，那么当你每次调用make时，它将老实的执行你的每次调用.
+
+Makefile中的变量定义,如同宏定义一样(那种语言的宏定义?)
+	variable = value
+这样，在其它规则的定义中，就可以用符号$(variable)来代替value
+
+一个抽象规则定义了如何从文件*.s1编译出*.s2。抽象规则通常的语法是:
+	.s1 .s2:
+	TAB COMMAND
+	TAB COMMAND
+	TAV …
+
+此处的s1为源文件的后缀，s2为相应的生成文件的后缀。COMMAND为生成规则。注意，此处没有提及dependency，因为一般情况下dependency是无意义的，它们必须由每个单独的case分别显式提供。
+
+在一个抽象规则的上下文中，下面的这些符号分别有各自的含义:
+	'$<' - 这些dependency的改变将会导致target的重编译
+	'$@' - 即target
+	'$^' - 当前文件的所有dependency
+
+例如，从源文件构造一个目标文件的抽象规则为:
+	.c.o:
+		gcc -c $<
+同样，从一堆目标文件构造可执行文件的规则为:
+	.o:
+		gcc $^ -o $@
+
+注意，由于可执行文件没有后缀，我们此处只写出目标文件的后缀。当只有一个前缀出现时，就假定为该后缀为s1，而s2则为空字符串。
+
+抽象规则中的后缀需要以这样的方式来组织:
+	.SUFFIXES: s1 s2 … sn
+
+makefile并不懂C源码，故不能决定源码文件之间的依赖性。GNU C编译器有这个功能。如果你用'-MM'标致的话，那么编译器会计算并输出相应的依赖关系，例如:
+	% gcc -MM foo1.c
+	foo1.o: foo1.c gleep2.h gleep3.h
+	% gcc -MM foo2.c
+	foo2.o: foo2.c gleep1.h
+	% gcc -MM foo3.c
+	foo3.o: foo3.c gleep1.h gleep2.h
+	% gcc -MM foo4.c
+	foo4.o: foo4.c gleep3.h
+生成的这些依赖关系可以直接用在makefile的依赖列表中.在UNIX系统中需要安装GNU编译器才有这项功能.
+处理dependency是编写makefile的障碍之一，另一个障碍就是，即便将这些dependency加入到到了Makefile的变量中，这些变量也需要人为的调整，而让软件安装着来编辑'Makefile'似乎有点不近人情。开发者让用户来编辑'Makefile'基本上让他们无法接受。另一个烦人的地方是clean和install规则的编写(以及这些target的处理)。长远来看，每次编写一个Makefile是相当乏味的。但这些target又是任务的关键所在，保证这些东西的编写没有错误是相当重要的。最后，如果你的lib和程序在多个目录中，那么你的makefile必须能在子目录中递归的调用'make'，也即你要写一大堆的makefile。
+这些问题并不是无法解决的，但是需要你有丰富的makefile编写经验。大多数开发者宁可调试源码，也不愿碰这些东西。GNU编译系统可以帮助你设置你的源码。GNU开发者只需要编写以下的'Makefile.am'文件:
+	bin_PROGRAM = foo
+	foo_SOURCES = foo1.c foo2.c foo3.c foo4.c
+再设置一些其它的东西。该文件将被编译成一个之间文件，即'makefile.in', 通过Automake，在安装期间，文件'Makefile'从'Makefile.in'中通过脚本'configure'生成.该shell脚本由开发者提供，也是由Autoconf生成的。
+
+通常情况下你不需要手写Makefile，但是理解makefile是如何工作以及如何编写抽象规则是非常有用的。
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

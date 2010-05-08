@@ -1,0 +1,21 @@
+每次安装系统都要琢磨着需要安装些什么软件。
+恰逢今日安装系统,XP英文版。
+	首先是驱动，笔记本的驱动应该还是比较方便的。但在本机备份应该是一个明智的选择.
+	解压软件，目前用7z.
+	虚拟光驱，目前用daemon tools lite
+	编辑软件，notepad++, openoffice, ue
+	QQ,其实很不想用，无奈.
+	播放软件,foobar以及storm code，ttplayer也用用
+	虚拟机软件,vmware
+	开发工具,vs或者vc6
+	浏览器firefox
+	输入法,google拼音
+	即时聊天软件，gtalk,集成gmail
+	PDF阅读器,目前装的是专业版
+	杀毒软件,AVG anti-varus
+	卸载助手 ccleaner
+	暂时就这些.
+	
+装系统时需要注意的事:
+	事先一定要准备好系统碟的序列号(Unix/Linux系统例外)
+	将C盘的可重用数据备份.

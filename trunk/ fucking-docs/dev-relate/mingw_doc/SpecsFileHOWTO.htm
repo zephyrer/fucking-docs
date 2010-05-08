@@ -1,0 +1,416 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xml:lang="en" xmlns="http://www.w3.org/1999/xhtml" lang="en"><head>
+
+
+
+  <title>HOWTO Use the GCC specs file | MinGW</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <link type="text/css" rel="stylesheet" media="all" href="SpecsFileHOWTO_files/aggregator.css">
+<link type="text/css" rel="stylesheet" media="all" href="SpecsFileHOWTO_files/node.css">
+<link type="text/css" rel="stylesheet" media="all" href="SpecsFileHOWTO_files/defaults.css">
+<link type="text/css" rel="stylesheet" media="all" href="SpecsFileHOWTO_files/system.css">
+<link type="text/css" rel="stylesheet" media="all" href="SpecsFileHOWTO_files/system-menus.css">
+<link type="text/css" rel="stylesheet" media="all" href="SpecsFileHOWTO_files/user.css">
+<link type="text/css" rel="stylesheet" media="all" href="SpecsFileHOWTO_files/logintoboggan.css">
+<link type="text/css" rel="stylesheet" media="all" href="SpecsFileHOWTO_files/comment.css">
+<link type="text/css" rel="stylesheet" media="all" href="SpecsFileHOWTO_files/style.css">
+    <script type="text/javascript"> </script>
+  </head><body id="second">
+  <div id="page" class="one-sidebar two-sidebars">
+  
+    <div id="header">
+    
+      <div id="logo-title">
+       
+                
+                  <h1 id="site-name">
+            <a href="http://www.mingw.org/" title="Home">
+              MinGW            </a>
+          </h1>
+                
+         
+          <div id="site-slogan">
+            Minimalist GNU for Windows          </div>
+                
+      </div>
+      
+      <div class="menu withprimarywithsecondary">
+                      <div id="primary" class="clear-block">
+              <ul class="links primary-links"><li class="menu-43 first"><a href="http://www.mingw.org/About" title="About MinGW">About</a></li>
+<li class="menu-66"><a href="http://www.mingw.org/wiki/MinGWiki" title="MinGW's New Wiki">Documentation</a></li>
+<li class="menu-63"><a href="http://www.mingw.org/tracker">Recent posts</a></li>
+<li class="menu-48 last"><a href="http://www.mingw.org/aggregator">Feed aggregator</a></li>
+</ul>            </div>
+                    
+                      <div id="secondary" class="clear-block">
+                      </div>
+                </div>
+      
+            
+    </div>
+
+    <div id="container" class="withleft withright clear-block">
+      
+      <div id="main-wrapper">
+      <div id="main" class="clear-block">
+        <div class="breadcrumb"><a href="http://www.mingw.org/">Home</a></div>                        <h1 class="title">HOWTO Use the GCC specs file</h1>        <div class="tabs"><ul class="tabs primary">
+<li class="active"><a href="http://www.mingw.org/wiki/SpecsFileHOWTO" class="active">View</a></li>
+<li><a href="http://www.mingw.org/node/25/revisions">Revisions</a></li>
+</ul>
+</div>                        <div class="node" id="node-25">
+  
+    
+  
+    <div class="meta with-taxonomy">
+  
+          <div class="submitted">Posted July 25th, 2008 by jonY</div> 
+        
+     
+      <div class="taxonomy"><ul class="links inline"><li class="taxonomy_term_9 first"><a href="http://www.mingw.org/category/wiki/gcc" rel="tag" title="">gcc</a></li>
+<li class="taxonomy_term_3"><a href="http://www.mingw.org/category/wiki/how_to" rel="tag" title="">how to</a></li>
+<li class="taxonomy_term_15 last"><a href="http://www.mingw.org/category/wiki/mingw" rel="tag" title="">mingw</a></li>
+</ul></div>
+        
+  </div>
+    
+  <div class="content">
+    <h2 id="toc21">About Specs file</h2>
+<p>The "gcc" program invoked by users is a convenient front-end driver
+executable which will invoke other programs in the background such as
+cc1, as or ld to do its work according to the command line parameter
+given. A <em>specs</em> file is plain text used to control the default behavior for the "gcc" front-end. The specs file is usually <em>built-in</em>
+but for flexibility purposes, it can be overridden with an external
+version. Example use: link against a different version of msvcrt.dll.</p>
+<h2 id="toc22">Basic Specs file modifications</h2>
+<p>GCC will produce a specs file via the following command. </p>
+<pre>gcc -dumpspecs &gt; specs</pre><p> You may use a text editor of
+your choice to inspect it. It may be confusing at first, but there are
+many places of interest. To use the specs file, invoke gcc with <em>-specs=&lt;path_to_specs_file&gt;</em>
+or place it at "/mingw/lib/gcc/mingw32/&lt;version&gt;/specs" to make
+GCC use it by default, where &lt;version&gt; refers to the GCC version
+installed.</p>
+<h3 id="toc23">Adding <em>include</em> directories to the search path</h3>
+<p> The <strong>*cpp:</strong> section should be modified. It contains the following by default: </p>
+<pre>*cpp:
+%{posix:-D_POSIX_SOURCE} %{mthreads:-D_MT}</pre><p>If "z:\libx\include" needs to be added to the GCC includes search path, it should be changed to the following</p>
+<p></p><pre>*cpp:
+%{posix:-D_POSIX_SOURCE} %{mthreads:-D_MT} -I z:/libx/include</pre>
+<h3 id="toc24">Adding <em>lib</em> directories to the search path</h3>
+<p> The <strong>*link_libgcc:</strong> section should be modified. It contains the following by default: </p>
+<pre>*link_libgcc:
+%D</pre><p>If "z:\libx\lib" needs to be added to the GCC library search path, it should be changed to the following </p>
+<pre>*link_libgcc:
+%D -L z:/libx/lib</pre>
+<h2 id="toc25">More Help</h2>
+<p> <a href="http://gcc.gnu.org/onlinedocs/gcc-4.3.0/gcc/Spec-Files.html">GCC-4.3.0 specs file help</a></p>
+  </div>
+  
+      <div class="links">
+      <ul class="links inline"><li class="comment_forbidden first"><span><a href="http://www.mingw.org/user/login?destination=comment/reply/25%2523comment-form">Login</a> or <a href="http://www.mingw.org/user/register?destination=comment/reply/25%2523comment-form">register</a> to post comments</span></li>
+<li class="statistics_counter last"><span>21264 reads</span></li>
+</ul>    </div>
+    
+</div>
+<div id="comments">
+  <a id="comment-106"></a>
+<div class="comment">
+<h3 class="title"><a href="http://www.mingw.org/wiki/SpecsFileHOWTO#comment-106" class="active">Re: HOWTO Use the GCC specs file</a></h3>
+<div class="picture">
+  <img src="SpecsFileHOWTO_files/picture-7.png" alt="keith's picture" title="keith's picture"></div>
+    <div class="submitted">On August 28th, 2008 keith says:</div>
+    <div class="content"><p>I have a number of concerns about the veracity and advisability of the recommendations posted above.</p>
+<p>First, and perhaps most importantly, GCC is <em>not</em> an MSYS
+application, so it knows nothing about the MSYS syntax for representing
+path names. Thus, the MSYS style paths used in the above examples,
+specifically /z/libx/include, used with the -I flag in the sample *cpp:
+spec, and /z/libx/lib, used with the -L flag in the sample
+*link_libgcc: spec, simply will not work; these need to be expressed as
+z:/libx/include and z:/libx/lib respectively. Similarly, the path
+stated for the standard location for specs files is only valid from
+within the MSYS shell, and would be better expressed generically in
+native MS-Windows format as </p>
+<pre>&lt;mingw-root&gt;/lib/gcc/mingw32/&lt;gcc-version&gt;</pre><p>
+where &lt;mingw-root&gt; represents the MinGW installation directory,
+(which is c:/mingw in a default installation), and users of cmd.exe
+will need to substitute backslashes for slashes, on the command line,
+(but are advised to use slashes, and <em>not</em> backslashes, within any modified specs file).</p>
+<p>Second, the above text neatly, but ambiguously, dodges the issue of
+overriding the built-in specs; (an issue where GCC's own --help output
+causes confusion, for it says </p>
+<pre>  -specs=&lt;file&gt;        Override built-in specs with the contents of &lt;file&gt;</pre><p> but in fact, this option <em>augments</em>, rather than explicitly <em>overrides</em> the built-in specs).  Here is how specs work, in practice:</p>
+<ol>
+<li> GCC provides a set of built-in specs, tailored to its specific
+implementation, (MinGW, in our case), which are used by default, when
+specs need to be evaluated.</li>
+<li> When the specs are evaluated, GCC looks for the file<br>
+<pre>&lt;mingw-root&gt;/lib/gcc/mingw32/&lt;gcc-version&gt;/specs</pre><p> If this file exists, then the built-in specs are <em>ignored en-masse</em>, and the contents of this file are evaluated <em>in their stead</em>.  (Thus, this file, and this file only, has the effect of overriding the built-in specs, <em>in their entirety</em>).  This file is always processed, if it exists; it is unnecessary to specify it in a -specs=&lt;file&gt; option.
+</p></li><li> After the default specs have been loaded, any additional
+specs files specified with -specs=&lt;file&gt; options are loaded. Such
+additional specs files <em>may</em> redefine <em>every</em> spec previously loaded; in this manner, such a file <em>may</em> override the built-in or external default specs, as suggested by the --help text.  However, much more usefully, such files may <em>selectively</em> redefine <em>just a small subset</em> of the default specs, so <em>augmenting</em> rather than <em>overriding</em>
+the default behaviour. For example, here is a method for utilising a
+version of MSVCRT.DLL, other than the default, (say MSVCR80.DLL), on
+demand:
+<ul>
+<li> Ensure that the default specs are defined externally, (i.e. ensure that they are defined in the<br>
+<pre>&lt;mingw-root&gt;/lib/gcc/mingw32/&lt;gcc-version&gt;/specs</pre><p>file), rather than built-in; if they are not, use the command</p>
+<pre>gcc -dumpspecs &gt; &lt;mingw-root&gt;/lib/gcc/mingw32/&lt;gcc-version&gt;/specs</pre><p>(with appropriate substitutions for &lt;mingw-root&gt; and &lt;gcc-version&gt;), to create a suitable external specs file.
+</p></li><li> Open the default external specs file in your favourite editor, and add the new specs:<br>
+<pre>*msvcrt:
+msvcrt
+ 
+*msvcrt_version:
+ 
+ 
+*moldname:
+moldname
+ </pre><p>(note that each spec definition requires <em>at least</em> one definition line, and must be separated from the next by <em>exactly</em> one blank line; thus, the tag line for '*msvcrt_version:' must be followed by <em>exactly two</em>
+blank lines, one for the empty definition, and the second to mark the
+end of that definition. Pay particular attention to those blank lines, <em>especially</em> if you copy-and-paste from these examples: they must be completely empty; <em>no stray white space is permitted</em>, but it is present here, to ensure that the layout is shown correctly in your browser).
+</p></li><li> Still editing the external default specs file, locate the definition for '*cpp:'; in a default specs file, it should look like:<br>
+<pre>*cpp:
+%{posix:-D_POSIX_SOURCE} %{mthreads:-D_MT}
+ </pre><p>(noting that it too must be followed by <em>exactly</em> one blank line); to that definition, add the substitution macro '%(msvcrt_version)', (note parentheses, not braces here, but <em>do</em> leave the braces as they are, in the original <em>conditional</em> macros), so that it now looks like:</p>
+<pre>*cpp:
+%(msvcrt_version) %{posix:-D_POSIX_SOURCE} %{mthreads:-D_MT}
+ </pre></li>
+<li> Similarly, locate the spec for '*libgcc:'; it should look something like:<br>
+<pre>*libgcc:
+%{mthreads:-lmingwthrd} -lmingw32 -lgcc -lmoldname -lmingwex -lmsvcrt
+ </pre></li>
+<li> Within this spec string, locate the specific reference for
+'-lmsvcrt', and change it to use the substitution macro '-l%(msvcrt)';
+do likewise for the '-lmoldname' reference, so that the entire spec now
+looks like:<br>
+<pre>*libgcc:
+%{mthreads:-lmingwthrd} -lmingw32 -lgcc -l%(moldname) -lmingwex -l%(msvcrt)
+ </pre></li>
+<li> Save this modified specs file, as<br>
+<pre>&lt;mingw-root&gt;/lib/gcc/mingw32/&lt;gcc-version&gt;/specs</pre></li>
+<li> Again using your favourite editor, create an additional specs file, in the same directory,  calling it say 'msvcr80'; i.e.<br>
+<pre>&lt;mingw-root&gt;/lib/gcc/mingw32/&lt;gcc-version&gt;/msvcr80</pre><p>this should contain:</p>
+<pre>*msvcrt:
+msvcr80
+ 
+*msvcrt_version:
+-D__MSVCRT_VERSION__=0x0800
+ 
+*moldname:
+moldname80
+ </pre><p>(again
+noting the one blank line, at end of file, following the '*moldname:'
+definition). This file need contain no more than this; save it.
+</p></li><li> Repeat the preceding step, with appropriate alternative
+file names, and definitions, to specify any other MSVCRT.DLL versions
+you wish to support.</li>
+<li> To compile applications, such that they use the default version of
+MSVCRT.DLL, you may continue to invoke GCC just as you usually would,
+e.g.<br>
+<pre>gcc -o foo foo.c</pre></li>
+<li> To compile applications, such that they use an alternative version
+of MSVCRT.DLL, simply add the appropriate -specs=&lt;file&gt; option,
+e.g. for MSVCR80.DLL<br>
+<pre>gcc -specs=msvcr80 -o foo foo.c</pre></li>
+</ul>
+</li>
+</ol>
+<p>Third, while the modifications suggested in the original text, (with
+appropriate corrections to the path name syntax), will certainly
+achieve the desired effect, I would <em>strongly</em> recommend a less
+intrusive approach; e.g. rather than hard code the absolute paths into
+'*cpp:' and '*link_libgcc:' directly, I would insert:</p>
+<p></p><pre>*local_prefix:
+&lt;mingw-root&gt;/local/
+ 
+*local_includes:
+-I%(local_prefix)include
+ 
+*local_lib_search:
+-L%(local_prefix)lib
+ </pre>
+<p>at the top of the default specs file, then modify '*cpp:' to something like:</p>
+<p></p><pre>*cpp:
+%(msvcrt_version) %{posix:-D_POSIX_SOURCE} %{mthreads:-D_MT} %(local_includes)
+ </pre>
+<p>and '*link_libgcc:' to something like:</p>
+<p></p><pre>*link_libgcc:
+%D %(local_lib_search)
+ </pre>
+<p>and also, (not mentioned in the original article, but required to make g++ work correctly), '*cc1plus:' to add:</p>
+<p></p><pre>*cc1plus:
+%(local_includes)
+ </pre>
+<p>This allows the local includes and library paths to be readily
+modified, either directly within the default specs file, or more
+usefully perhaps, through the use of supplementary specs files.</p>
+<p>And finally, I would add a word of caution: do <em><strong>not</strong></em> blindly overwrite an existing specs file at</p>
+<pre>&lt;mingw-root&gt;/lib/gcc/mingw32/&lt;gcc-version&gt;/specs</pre><p> if there is one already present, (which there <em>always</em> should be, for versions of GCC prior to gcc-4.0), by executing</p>
+<pre>gcc -dumpspecs &gt; &lt;mingw-root&gt;/lib/gcc/mingw32/&lt;gcc-version&gt;/specs</pre><p>
+If you do this, you will destroy any customisations which are already
+in place. It is better to make a backup copy of any such existing specs
+file, (in case your subsequent changes mess it up), and then use the
+original as the basis for further customisation.</p>
+</div>
+    <div class="links"><ul class="links"><li class="comment_forbidden first last"><span><a href="http://www.mingw.org/user/login?destination=comment/reply/25%2523comment-form">Login</a> or <a href="http://www.mingw.org/user/register?destination=comment/reply/25%2523comment-form">register</a> to post comments</span></li>
+</ul></div>
+</div>
+</div>
+              </div>
+      </div>
+      
+              <div id="sidebar-left" class="sidebar">
+          <form action="/wiki/SpecsFileHOWTO" accept-charset="UTF-8" method="post" id="search-theme-form">
+<div><div id="search" class="container-inline">
+  <div class="form-item" id="edit-search-theme-form-1-wrapper">
+ <label for="edit-search-theme-form-1">Search this site: </label>
+ <input maxlength="128" name="search_theme_form" id="edit-search-theme-form-1" size="15" title="Enter the terms you wish to search for." class="form-text" type="text">
+</div>
+<input name="op" id="edit-submit" value="Search" class="form-submit" type="submit">
+<input name="form_build_id" id="form-1aa9f924973c4f33bb7ff9fc3fd52677" value="form-1aa9f924973c4f33bb7ff9fc3fd52677" type="hidden">
+<input name="form_id" id="edit-search-theme-form" value="search_theme_form" type="hidden">
+</div>
+
+</div></form>
+          <div class="block block-block" id="block-block-2">
+  <div class="blockinner">
+
+    <h2 class="title"> Administrative Update </h2>
+    <div class="content">
+      Thanks to <br><a href="http://www.networkredux.com/"><img src="SpecsFileHOWTO_files/NetworkRedux-140x31-3.png"></a><br> As of March 4th, 2009 13:30 UTC we have a new hosting provider for our web portal.  Please consider giving <a href="http://www.networkredux.com/">NetworkRedux</a> your hosting business as a thank you to providing FOSS projects hosting solutions.     </div>
+    
+  </div>
+</div>
+<div class="block block-user" id="block-user-0">
+  <div class="blockinner">
+
+    <h2 class="title"> User login </h2>
+    <div class="content">
+      <a href="http://www.mingw.org/user/login?destination=node%2F25">Login/Register</a>    </div>
+    
+  </div>
+</div>
+<div class="block block-user" id="block-user-1">
+  <div class="blockinner">
+
+    <h2 class="title"> Navigation </h2>
+    <div class="content">
+      <ul class="menu"><li class="expanded first"><a href="http://www.mingw.org/About" title="About MinGW">About</a><ul class="menu"><li class="leaf first"><a href="http://www.mingw.org/contact">Contact</a></li>
+<li class="leaf"><a href="http://www.mingw.org/history" title="History">History</a></li>
+<li class="leaf"><a href="http://www.mingw.org/license" title="Licensing Terms">Licensing Terms</a></li>
+<li class="leaf"><a href="http://www.mingw.org/mailing_lists" title="Mailing Lists">Mailing Lists</a></li>
+<li class="leaf"><a href="http://www.mingw.org/privacy" title="Privacy">Privacy</a></li>
+<li class="leaf"><a href="http://www.mingw.org/bugs.shtml" title="Reporting Bugs">Reporting Bugs</a></li>
+<li class="leaf"><a href="http://www.mingw.org/wiki/SubmitPatches" title="How to submit patches">Submit Patches</a></li>
+<li class="leaf"><a href="https://sourceforge.net/project/showfiles.php?group_id=2435">Downloads</a></li>
+<li class="leaf last"><a href="http://www.mingw.org/sitemap.xml" title="Sitemap">Sitemap</a></li>
+</ul></li>
+<li class="collapsed"><a href="http://www.mingw.org/wiki/MinGWiki" title="MinGW's New Wiki">Documentation</a></li>
+<li class="leaf"><a href="http://www.mingw.org/tracker">Recent posts</a></li>
+<li class="collapsed last"><a href="http://www.mingw.org/aggregator">Feed aggregator</a></li>
+</ul>    </div>
+    
+  </div>
+</div>
+<div class="block block-user" id="block-user-3">
+  <div class="blockinner">
+
+    <h2 class="title"> Who's online </h2>
+    <div class="content">
+      There are currently <em>1 user</em> and <em>79 guests</em> online.<div class="item-list"><h3>Online users</h3><ul><li class="first last">chenhu</li>
+</ul></div>    </div>
+    
+  </div>
+</div>
+<div class="block block-statistics" id="block-statistics-0">
+  <div class="blockinner">
+
+    <h2 class="title"> Popular content </h2>
+    <div class="content">
+      <div class="item-list"><h3>Today's:</h3><ul><li class="first"><a href="http://www.mingw.org/wiki/HOWTO_Install_the_MinGW_GCC_Compiler_Suite">HOWTO Install the MinGW (GCC) Compiler Suite</a></li>
+<li><a href="http://www.mingw.org/wiki/MSYS">MSYS</a></li>
+<li><a href="http://www.mingw.org/wiki/Getting_Started">Getting Started</a></li>
+<li><a href="http://www.mingw.org/wiki/MinGWiki">MinGWiki</a></li>
+<li><a href="http://www.mingw.org/wiki/FAQ">FAQ</a></li>
+<li><a href="http://www.mingw.org/wiki/HOWTO">HOWTO</a></li>
+<li class="last"><a href="http://www.mingw.org/wiki/MinGW">MinGW</a></li>
+</ul></div><br><div class="item-list"><h3>All time:</h3><ul><li class="first"><a href="http://www.mingw.org/wiki/HOWTO_Install_the_MinGW_GCC_Compiler_Suite">HOWTO Install the MinGW (GCC) Compiler Suite</a></li>
+<li><a href="http://www.mingw.org/wiki/MSYS">MSYS</a></li>
+<li class="last"><a href="http://www.mingw.org/wiki/Getting_Started">Getting Started</a></li>
+</ul></div><br><div class="item-list"><h3>Last viewed:</h3><ul><li class="first"><a href="http://www.mingw.org/wiki/HOWTO_Install_the_MinGW_GCC_Compiler_Suite">HOWTO Install the MinGW (GCC) Compiler Suite</a></li>
+<li><a href="http://www.mingw.org/wiki/make">make</a></li>
+<li class="last"><a href="http://www.mingw.org/wiki/LibraryPathHOWTO">HOWTO Specify the Location of Libraries for use with MinGW</a></li>
+</ul></div>    </div>
+    
+  </div>
+</div>
+<div class="block block-comment" id="block-comment-0">
+  <div class="blockinner">
+
+    <h2 class="title"> Recent comments </h2>
+    <div class="content">
+      <div class="item-list"><ul><li class="first"><a href="http://www.mingw.org/wiki/Getting_Started#comment-538">Re: MinGW 5.1.6 Error: mismatched long filename</a><br>2 weeks 3 days ago</li>
+<li><a href="http://www.mingw.org/wiki/Getting_Started#comment-537">MinGW 5.1.6 Error: mismatched long filename</a><br>2 weeks 5 days ago</li>
+<li><a href="http://www.mingw.org/wiki/Getting_Started#comment-534">Re: Getting Started</a><br>4 weeks 21 hours ago</li>
+<li><a href="http://www.mingw.org/wiki/MinGW#comment-533">Re: MinGW and Twilight Dragon media</a><br>4 weeks 3 days ago</li>
+<li><a href="http://www.mingw.org/wiki/MinGW#comment-532">Re: MinGW and Twilight Dragon media</a><br>4 weeks 6 days ago</li>
+<li><a href="http://www.mingw.org/wiki/Getting_Started#comment-521">Re: Getting Started</a><br>7 weeks 1 day ago</li>
+<li><a href="http://www.mingw.org/wiki/MSYS#comment-507">Re: bug in MSYS-1.0.11.exe</a><br>12 weeks 6 days ago</li>
+<li><a href="http://www.mingw.org/wiki/MSYS#comment-506">bug in MSYS-1.0.11.exe</a><br>13 weeks 5 hours ago</li>
+<li><a href="http://www.mingw.org/wiki/MinGW#comment-496">Re: MinGW and Twilight Dragon media</a><br>16 weeks 2 days ago</li>
+<li class="last"><a href="http://www.mingw.org/wiki/FAQ#comment-484">Re: FAQ</a><br>18 weeks 6 days ago</li>
+</ul></div>    </div>
+    
+  </div>
+</div>
+        </div>
+      
+              <div id="sidebar-right" class="sidebar">
+          <div class="block block-block" id="block-block-1">
+  <div class="blockinner">
+
+    <h2 class="title"> Mail List Search </h2>
+    <div class="content">
+         <form method="post" action="http://sourceforge.net/search/">
+   <p>
+   <span class="small">Choose Mail List:</span>
+   <select name="forum_id">
+     <option selected="selected" value="5119">MinGW-users</option>
+     <option value="4855">MinGW-msys</option>
+     <option value="5123">MinGW-dvlpr</option>
+     <option value="5121">MinGW-notify</option>
+   </select>
+   </p><p>
+   <input name="type_of_search" value="mlists" type="hidden">
+   <input name="group_id" value="2435" type="hidden">
+   <input name="words" id="Words" type="text"><br>
+   <input name="exact" value="1" checked="checked" type="checkbox">
+         <span id="Label">Require all words?</span><br><br>
+   <input name="Search" value="Search" type="submit">
+   </p>
+   </form>
+    </div>
+    
+  </div>
+</div>
+<div class="block block-block" id="block-block-4">
+  <div class="blockinner">
+
+    <h2 class="title"> Powered by </h2>
+    <div class="content">
+      <a href="http://sourceforge.net/projects/mingw" target="_sfpage"><img src="SpecsFileHOWTO_files/sflogo.png" alt="SourceForge Logo" width="88" border="0" height="31">  </a><br><a href="http://www.networkredux.com/"><img src="SpecsFileHOWTO_files/NetworkRedux-140x31-3.png"></a><br><a href="http://drupal.org/"><img src="SpecsFileHOWTO_files/powered-blue-80x15.png"></a><br>
+    </div>
+    
+  </div>
+</div>
+        </div>
+      
+    </div>
+
+    <div id="footer">
+      Copyright © 2009 - MinGW.org
+    </div>
+
+    
+        
+  </div>
+
+</body></html>

@@ -1,0 +1,12 @@
+[wikipedia]
+...As with any communication, compressed data communication only works when the sender and receiver of the information understand the encoding scheme...compressed data can only be understood if the decoding method is known by the receiver.
+
+$important point$
+...helps reduce the consumption of expensive resources(HD, bandwidth, etc.). On the downside, compressed data must be decompressed to be used, and this extra processing may be detrimental to some applications...the design of data compression schemes therefore involves trade-offs among various factors, including the degree of compression, the amount of distortion(if using a lossy compression scheme), and the computational resources required to compress and uncompress the data.
+
+Lossless versus lossy compression
+Lossless compression algorithms usually exploit statistical redundancy in such a way as to present the send's data more concisely without error. Lossless compression is possible because most real-world data has statistical redundancy... Another kind of compression, called lossy data compression or perceptual coding, is possible if some loss of fidelity is acceptable. Generally, a lossy data compression will be guided by research on how people perceive the data in information. [Lossy data compression provides a way to obtain the best fidelity for a given amount of compression.] In some case, transparent (unnoticeable) compression is desired; in other cases, fidelity is sacrificed to reduce the amount of data as much as possible.
+
+[Lossless compression schemes are reversible so that the original data can be reconstructed, while lossy schemes accept some loss of data in order to achieve higher compression.]
+
+However, lossless data compression algorithms will always fail to compress some files; indeed, any compression algorithm will necessary fail to compress any data containing no discernible patterns. Attempts to compress data that has been compressed already will therefore usually result in an expansion, as will attmpts to compress all but the most trivially encrypted data.

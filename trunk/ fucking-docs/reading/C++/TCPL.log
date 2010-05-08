@@ -1,0 +1,196 @@
+10.2.3^类的构造函数:
+	# 可提供类的多个构造函数.
+	# 可为类提供默认的初始化值——名曰『pick the default』.但这这样做的代价:
+		(1)如果用全局变量来作为类对象的初始化值,类将依赖于全局变量;
+		(2)使得类只能在当前的context中使用; such a context-dependent class...
+		(3)除了原始作者,这种风格的代码是没什么用处的.
+		
+10.2.4^类的静态成员:
+		class Date {
+			int d, m , y;
+			static Date default_date;
+		public:
+			Date(int dd = 0, int mm = 0, int yy = 0);
+			/*...*/
+			static void set_default(int, int, int);
+		};
+		/* Date构造函数 */
+		Date::Date(int dd, int mm, int yy) {
+			d = dd ? dd : default_date.d;
+			m = mm ? mm : default_date.m;
+			y = yy ? yy : default_date.y;
+		}
+	# 使得一个变量是类的一部分,但不是该类对象的一部分——这便是static成员,类的static成员只有一份拷贝,而不是每个成员都有相应的拷贝。
+	# 所以当某个函数(不管其跟类有无关系),如果需要调用该静态成员,那么该函数并不需要一个该类的对象——这便是静态成员函数;
+	# 咱这样使用一个类的静态成员函数:
+		void f() {
+			Date::set_default(4, 5, 1945);
+		}
+	  需要注意的是,both function and data members - must be defined somewhere:
+	  	Data Date::default_date(16, 12, 1770);	/* 静态成员初始化 $ 这样初始化应该是没问题的——而且貌似必须这么干 */
+	  	void Date::set_default(int d, int m, int y) {	/* 用静态成员函数来初始化静态成员 $ 但是如果这样初始化静态成员,
+	  	                                                   但并不调用set_default函数,会不会有语法错误? ——一定会有的. */
+	  		Date::default_date = Date(d, m, y);	
+	  	}
+	  Note that Date() serves as a notation for the value of Date::default_date. e.g:
+	  	Date copy_of_default_date = Date();	/* 不提供任何参数,即初始化为默认日期 */
+	  这么干之后，我们就不需要另外的函数来读取默认的日期了。(通过在构造函数中实现默认初始值的设置)
+	  
+10.2.6^类的常量成员
+	# 类的常量成员函数不能修改修改类对象所处的状态,且编译器会对违反这种规定的代码进行检查.
+	# 若常量成员函数在类外部定义:
+		inline int Date::year() const {	/* 此处的const不能省略,即使在year()的声明中有const */
+			return y;
+		}
+	# 一个const成员函数可以被const对象和non-const对象调用，但是一个non-const成员函数只能由non-const对象来调用.(若const成员函数可以调用non-const成员函数，那么，const成员函数极有可能会改变类对象的状态)
+		void f(Date &d, const Date &cd) {
+			int i = d.year();	/* ok */
+			d.add_year(1);		/* ok */
+			
+			int j = cd.year;	/* ok */
+			cd.add_year(1);		/* error:  不能修改cd的值 */
+		}
+
+10.2.7^this指针
+	# 在一个non-static成员函数中，this为一个指针，指向调用该成员函数的那个类对象，在non-const成员函数中，this的类型为X *const，
+	这里的const使得用户不能修改this的值；在一个const成员函数中，this的类型为const X *，以阻止对对象自身的修改(谁更靠近const，谁
+	就『安全』...)
+
+10.2.7.1^ Physical and Logical Constness
+	# 有时，成员函数是logical-const，但是有时又需要这样的函数来修改一下成员的值，在用户看来，该函数看起来是不会修改其对象的状态的，但
+	是有些细节用户还是无法直接观察到的：
+		  class Date {
+		  	bool cache_valid;
+		  	string cache;
+		  	void compute_cache_value();		/* fill cache */
+		  	/* ... */
+		  public:
+		  	/* ... */
+		  	string string_rep() const;		/* string representation */
+		  };
+	  在用户看来，string_rep()是不会修改Date状态的，所以毫无疑问它应该是一个const成员函数。另一方面，cache需要事先需要填充内容:
+		  string Date::string_rep() const {
+		  	if (cache_valid == false) {
+		  		Date *th = const_cast<Date *>(this);	/* cast away const */
+		  		th->compute_cache_value();
+		  		th->cache_valid = true;
+		  	}
+		  	return cache;
+		  }
+	  在此，const_cast用于将一个Date *类型的指针传给this。这极不优雅。而且如果事先对象原有类型为const时，这招并不凑效：
+		  Date dl;
+		  const Date d2;
+		  string s1 = d1.string_rep();
+		  string s2 = d2.string_rep();		/* undifined behavior */
+	  在dl中，string_rep将dl转化成原有类型，所以这个调用没问题。但是d2定义为一个const，这会引起内存保护，以使的d2的值不会销毁。此处,
+	  d2.string_rep()的结果没有保证。
+	  
+10.2.7.2^Mutable
+		class Date {
+			mutable bool cache_valid;
+			mutable string cache;
+			void compute_cache_value() const;		/* fill (mutable) cache */
+			/* ... */
+		public:
+			/* ... */
+			string string_rep() const;		/* string representation */
+		};
+	# 此处的mutable限定，认为该成员是『可修改的』，而不管成员函数是否属于是const对象。In other words, mutable means "can never
+	 be const."
+	  这样，string_rep()的定义为:
+	  	string Date::string_rep() const {
+	  		if (!cache_valid) {
+	  			compute_cache_value();
+	  			cache_valid = true;
+	  		}
+	  		return cache;
+	  	}
+	  这样，string_rep()的使用就正确了：
+	  	Date d3;
+	  	const Date d4;
+	  	string s3 = d3.string_rep();
+	  	string s4 = d4.string_rep();	/* ok! */
+	  Declaring members mutable is most appropriate when (only) part of a representation is allowed to change. If
+	  most of an object changes while the object remains logically const , it is often better to place the changing
+	  data in a separate object and access it indirectly. If that technique is used, the string-with-cache example 
+	  becomes:
+	  
+10.3.4^The significance of concret class
+	# The intent of a concrete type is to do a single, relatively small thing well and efficiently.
+	
+	# Concrete types are not intended to display polymorphic behavior.
+	
+	# A concrete class such as Date incurs no hidden overhead in time or space. The size of a concrete 
+	type is known at compile time so that objects can be allocated on the runtime stack (that is, without
+	freestore operations). The layout of each object is known at compile time so that inlining of operations 
+	is trivially achieved.
+	
+	# A good set of such types can provide a foundation for applications. Lack of suitable "small efficient types"
+	in an application can lead to gross runtime and space inefficiencies when overly general and expensive classes 
+	are used. Alternatively, lack of concrete types can lead to obscure programs and time wasted when each programmer
+	writes code to directly manipulate "simple and frequently used" data structures.
+
+10.4.4.1^Copying Objects
+	class Name {
+	      const char *s;
+	      /* ... */
+	};
+	class Table {
+	      Name *p;
+	      size_t sz;
+	public:
+	      Table(size_t = 15) { p = new Name[sz=s]; } /* construtor */
+	      ~Table() { delete [] p; }	   	         /* destructor */
+	      Name *lookup(const char *);
+	      bool insert(Name *);
+	};
+
+	void h(){
+	     Table t1;
+	     Table t2 = t1;	/* copy initialization: trouble
+	     Table t3;
+	     t3 = t2;		/* copy assignments: trouble */
+	}
+	此处，Table的默认构造函数有2次调用，t1和t3各一次，而在t2上没有调用默认构造函数，因为t2的初始化时通过赋值实现的，但是Table的析构函数却有
+	3次调用!这里的赋值都是memberwise拷贝，所以t1,t2,t3在h()退出时，其析构函数都会被调用。t3的指针成员在其创建的时候还是保存着的，但是当
+	t3=t2语句执行时，其指针就不存在了，被t2的指针成员所覆盖，所以，如果没有自动垃圾回收机制，t3指针成员所持有的资源对于程序而言，将永远消失。
+	另一方面，t1中的指针同时在t1,t2,t3中存在，(t2中的t1指针成员通过初始化拷贝过来),所以，t1中的数组将要被释放3次。这种实现的结果是为定义的，
+	而且可能造成灾难性的后果。
+
+	class Table {
+	      //...
+	      Table(const Table &);	//拷贝构造函数
+	      Table& operator=(const Table);	//拷贝赋值函数
+	};
+	Table::Table(const Table& t){
+	      p = new Name[sz=t.sz];
+	      for (int i=0; i<sz; i++) p[i]=t.p[i];
+	}
+	Table& Table::operator=(const Table &t) {
+	    if (this != &t) {				// 步骤1
+	        delete [] p;				// 步骤2
+		p = new Name[sz=t.sz];			// 步骤3
+		for (int i = 0; i<sz;i++) p[i]=t.p[i];	// 步骤4
+	    }
+	    return this;
+	}
+	拷贝构造函数和拷贝赋值函数有很大的不同，根本原因在于，一个拷贝构造函数会初始化内存，而拷贝赋值函数必须正确的操作一个已被完好构造的对象。
+	赋值函数在一些情况下可以优化，但是基本的策略都很简单：
+	1. 检查是否是self-assignment;
+	2. 删除原有元素;
+	3. 初始化新元素;
+	4. 拷贝新元素;  
+	一般而言，所有的非静态成员都必须拷贝.
+
+12.2.6^Virtual Functions
+        Getting "the right" bahavior from Employee's functions independently of exactly what kind of Employee is
+        actually used is called [polymorphism]. A type with virtual functions is called a [polymorphic type]. To
+        get polymorphic behavior in C++, the member functions called must be virtual and objects must be manipulated
+        through pointers or references. When manipulating an object directly(rather than through a pointer or reference),
+        its exact type is known by the compilation so the run-time polymorephism is not needed.
+
+        To implement polymorphism, the compiler must store some kind of type information in each object of class
+        Employee and use it to call the right version of the virtual function print(). In a typical implementation,
+        the space taken is just enough to hold a pointer. The space is taken only in objects of a class with virtual
+        function - not in every object, or even in every object of a derived class. You pay this overhead only for
+        classes for which you declare virtual functions.

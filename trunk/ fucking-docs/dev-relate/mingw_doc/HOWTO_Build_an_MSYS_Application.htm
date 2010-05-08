@@ -1,0 +1,277 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xml:lang="en" xmlns="http://www.w3.org/1999/xhtml" lang="en"><head>
+
+
+
+  <title>HOWTO Build an MSYS Application | MinGW</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <link type="text/css" rel="stylesheet" media="all" href="HOWTO_Build_an_MSYS_Application_files/aggregator.css">
+<link type="text/css" rel="stylesheet" media="all" href="HOWTO_Build_an_MSYS_Application_files/node.css">
+<link type="text/css" rel="stylesheet" media="all" href="HOWTO_Build_an_MSYS_Application_files/defaults.css">
+<link type="text/css" rel="stylesheet" media="all" href="HOWTO_Build_an_MSYS_Application_files/system.css">
+<link type="text/css" rel="stylesheet" media="all" href="HOWTO_Build_an_MSYS_Application_files/system-menus.css">
+<link type="text/css" rel="stylesheet" media="all" href="HOWTO_Build_an_MSYS_Application_files/user.css">
+<link type="text/css" rel="stylesheet" media="all" href="HOWTO_Build_an_MSYS_Application_files/logintoboggan.css">
+<link type="text/css" rel="stylesheet" media="all" href="HOWTO_Build_an_MSYS_Application_files/comment.css">
+<link type="text/css" rel="stylesheet" media="all" href="HOWTO_Build_an_MSYS_Application_files/style.css">
+    <script type="text/javascript"> </script>
+  </head><body id="second">
+  <div id="page" class="one-sidebar two-sidebars">
+  
+    <div id="header">
+    
+      <div id="logo-title">
+       
+                
+                  <h1 id="site-name">
+            <a href="http://www.mingw.org/" title="Home">
+              MinGW            </a>
+          </h1>
+                
+         
+          <div id="site-slogan">
+            Minimalist GNU for Windows          </div>
+                
+      </div>
+      
+      <div class="menu withprimarywithsecondary">
+                      <div id="primary" class="clear-block">
+              <ul class="links primary-links"><li class="menu-43 first"><a href="http://www.mingw.org/About" title="About MinGW">About</a></li>
+<li class="menu-66"><a href="http://www.mingw.org/wiki/MinGWiki" title="MinGW's New Wiki">Documentation</a></li>
+<li class="menu-63"><a href="http://www.mingw.org/tracker">Recent posts</a></li>
+<li class="menu-48 last"><a href="http://www.mingw.org/aggregator">Feed aggregator</a></li>
+</ul>            </div>
+                    
+                      <div id="secondary" class="clear-block">
+                      </div>
+                </div>
+      
+            
+    </div>
+
+    <div id="container" class="withleft withright clear-block">
+      
+      <div id="main-wrapper">
+      <div id="main" class="clear-block">
+        <div class="breadcrumb"><a href="http://www.mingw.org/">Home</a></div>                        <h1 class="title">HOWTO Build an MSYS Application</h1>                                <div class="node" id="node-82">
+  
+    
+  
+    <div class="meta with-taxonomy">
+  
+          <div class="submitted">Posted February 23rd, 2009 by earnie</div> 
+        
+     
+      <div class="taxonomy"><ul class="links inline"><li class="taxonomy_term_3 first"><a href="http://www.mingw.org/category/wiki/how_to" rel="tag" title="">how to</a></li>
+<li class="taxonomy_term_13 last"><a href="http://www.mingw.org/category/wiki/msys" rel="tag" title="">msys</a></li>
+</ul></div>
+        
+  </div>
+    
+  <div class="content">
+    <p>TODO: Convert to MediaWiki syntax</p>
+<p>!!! Building an MSYS Application</p>
+<ol>
+<li>Be sure you really need to build an [MSYS Application | Shells, terminals and MSYS] rather than just a Windows Application.</li>
+</ol>
+<ol>
+<li>config.guess and config.sub:</li>
+</ol>
+<p>The first change you'll need to make is to the config.guess and
+config.sub unless you've obtained the source from the msys/packages CVS
+repository. That repository will have the changes already accomplished.
+Changing these files is a simple as copying the Cygwin sections and
+changing CYGWIN and cygwin to MSYS and msys respectfully.</p>
+<ol>
+<li>~__CYGWIN~__:</li>
+</ol>
+<p>The next change will be deciding whether any ~__CYGWIN~__ specific
+coding is needed for ~__MSYS~__. If yes then simply add the correct OR
+statements to the code.</p>
+<ol>
+<li>MSYS Build Environment:</li>
+</ol>
+<p>See the "[HOWTO Create an MSYS Build
+Environment|MSYSBuildEnvironment]" MinGWiki entry on how to enter into
+the MSYS build environment. You need to do this for the correct runtime
+headers and libraries.</p>
+<ol>
+<li>configure:</li>
+</ol>
+<p>You should now be able to configure the source and create a Makefile
+to build the application. Note that recent enhancements to Cygwin may
+cause the package to build appropriately for Cygwin and not for MSYS.
+If this is the case then you'll either need to change the application
+or the MSYS runtime. Note that the appropriate --prefix for an MSYS
+application is /usr unless the application is meant to support MSYS
+development only (e.g. GCC for MSYS) in which case the appropriate
+--prefix is /msys.</p>
+  </div>
+  
+      <div class="links">
+      <ul class="links inline"><li class="comment_forbidden first"><span><a href="http://www.mingw.org/user/login?destination=comment/reply/82%2523comment-form">Login</a> or <a href="http://www.mingw.org/user/register?destination=comment/reply/82%2523comment-form">register</a> to post comments</span></li>
+<li class="statistics_counter last"><span>4540 reads</span></li>
+</ul>    </div>
+    
+</div>
+<div id="comments">
+  </div>
+              </div>
+      </div>
+      
+              <div id="sidebar-left" class="sidebar">
+          <form action="/wiki/HOWTO_Build_an_MSYS_Application" accept-charset="UTF-8" method="post" id="search-theme-form">
+<div><div id="search" class="container-inline">
+  <div class="form-item" id="edit-search-theme-form-1-wrapper">
+ <label for="edit-search-theme-form-1">Search this site: </label>
+ <input maxlength="128" name="search_theme_form" id="edit-search-theme-form-1" size="15" title="Enter the terms you wish to search for." class="form-text" type="text">
+</div>
+<input name="op" id="edit-submit" value="Search" class="form-submit" type="submit">
+<input name="form_build_id" id="form-7f2dacd428f3cbee7e073f440e159f6d" value="form-7f2dacd428f3cbee7e073f440e159f6d" type="hidden">
+<input name="form_id" id="edit-search-theme-form" value="search_theme_form" type="hidden">
+</div>
+
+</div></form>
+          <div class="block block-block" id="block-block-2">
+  <div class="blockinner">
+
+    <h2 class="title"> Administrative Update </h2>
+    <div class="content">
+      Thanks to <br><a href="http://www.networkredux.com/"><img src="HOWTO_Build_an_MSYS_Application_files/NetworkRedux-140x31-3.png"></a><br> As of March 4th, 2009 13:30 UTC we have a new hosting provider for our web portal.  Please consider giving <a href="http://www.networkredux.com/">NetworkRedux</a> your hosting business as a thank you to providing FOSS projects hosting solutions.     </div>
+    
+  </div>
+</div>
+<div class="block block-user" id="block-user-0">
+  <div class="blockinner">
+
+    <h2 class="title"> User login </h2>
+    <div class="content">
+      <a href="http://www.mingw.org/user/login?destination=node%2F82">Login/Register</a>    </div>
+    
+  </div>
+</div>
+<div class="block block-user" id="block-user-1">
+  <div class="blockinner">
+
+    <h2 class="title"> Navigation </h2>
+    <div class="content">
+      <ul class="menu"><li class="expanded first"><a href="http://www.mingw.org/About" title="About MinGW">About</a><ul class="menu"><li class="leaf first"><a href="http://www.mingw.org/contact">Contact</a></li>
+<li class="leaf"><a href="http://www.mingw.org/history" title="History">History</a></li>
+<li class="leaf"><a href="http://www.mingw.org/license" title="Licensing Terms">Licensing Terms</a></li>
+<li class="leaf"><a href="http://www.mingw.org/mailing_lists" title="Mailing Lists">Mailing Lists</a></li>
+<li class="leaf"><a href="http://www.mingw.org/privacy" title="Privacy">Privacy</a></li>
+<li class="leaf"><a href="http://www.mingw.org/bugs.shtml" title="Reporting Bugs">Reporting Bugs</a></li>
+<li class="leaf"><a href="http://www.mingw.org/wiki/SubmitPatches" title="How to submit patches">Submit Patches</a></li>
+<li class="leaf"><a href="https://sourceforge.net/project/showfiles.php?group_id=2435">Downloads</a></li>
+<li class="leaf last"><a href="http://www.mingw.org/sitemap.xml" title="Sitemap">Sitemap</a></li>
+</ul></li>
+<li class="collapsed"><a href="http://www.mingw.org/wiki/MinGWiki" title="MinGW's New Wiki">Documentation</a></li>
+<li class="leaf"><a href="http://www.mingw.org/tracker">Recent posts</a></li>
+<li class="collapsed last"><a href="http://www.mingw.org/aggregator">Feed aggregator</a></li>
+</ul>    </div>
+    
+  </div>
+</div>
+<div class="block block-user" id="block-user-3">
+  <div class="blockinner">
+
+    <h2 class="title"> Who's online </h2>
+    <div class="content">
+      There are currently <em>0 users</em> and <em>77 guests</em> online.    </div>
+    
+  </div>
+</div>
+<div class="block block-statistics" id="block-statistics-0">
+  <div class="blockinner">
+
+    <h2 class="title"> Popular content </h2>
+    <div class="content">
+      <div class="item-list"><h3>Today's:</h3><ul><li class="first"><a href="http://www.mingw.org/wiki/HOWTO_Install_the_MinGW_GCC_Compiler_Suite">HOWTO Install the MinGW (GCC) Compiler Suite</a></li>
+<li><a href="http://www.mingw.org/wiki/MSYS">MSYS</a></li>
+<li><a href="http://www.mingw.org/wiki/Getting_Started">Getting Started</a></li>
+<li><a href="http://www.mingw.org/wiki/MinGWiki">MinGWiki</a></li>
+<li><a href="http://www.mingw.org/wiki/FAQ">FAQ</a></li>
+<li><a href="http://www.mingw.org/wiki/HOWTO">HOWTO</a></li>
+<li class="last"><a href="http://www.mingw.org/wiki/MinGW">MinGW</a></li>
+</ul></div><br><div class="item-list"><h3>All time:</h3><ul><li class="first"><a href="http://www.mingw.org/wiki/HOWTO_Install_the_MinGW_GCC_Compiler_Suite">HOWTO Install the MinGW (GCC) Compiler Suite</a></li>
+<li><a href="http://www.mingw.org/wiki/MSYS">MSYS</a></li>
+<li class="last"><a href="http://www.mingw.org/wiki/Getting_Started">Getting Started</a></li>
+</ul></div><br><div class="item-list"><h3>Last viewed:</h3><ul><li class="first"><a href="http://www.mingw.org/wiki/FAQ">FAQ</a></li>
+<li><a href="http://www.mingw.org/wiki/Getting_Started">Getting Started</a></li>
+<li class="last"><a href="http://www.mingw.org/mailing_lists">Mailing Lists</a></li>
+</ul></div>    </div>
+    
+  </div>
+</div>
+<div class="block block-comment" id="block-comment-0">
+  <div class="blockinner">
+
+    <h2 class="title"> Recent comments </h2>
+    <div class="content">
+      <div class="item-list"><ul><li class="first"><a href="http://www.mingw.org/wiki/Getting_Started#comment-538">Re: MinGW 5.1.6 Error: mismatched long filename</a><br>2 weeks 3 days ago</li>
+<li><a href="http://www.mingw.org/wiki/Getting_Started#comment-537">MinGW 5.1.6 Error: mismatched long filename</a><br>2 weeks 5 days ago</li>
+<li><a href="http://www.mingw.org/wiki/Getting_Started#comment-534">Re: Getting Started</a><br>4 weeks 21 hours ago</li>
+<li><a href="http://www.mingw.org/wiki/MinGW#comment-533">Re: MinGW and Twilight Dragon media</a><br>4 weeks 3 days ago</li>
+<li><a href="http://www.mingw.org/wiki/MinGW#comment-532">Re: MinGW and Twilight Dragon media</a><br>4 weeks 6 days ago</li>
+<li><a href="http://www.mingw.org/wiki/Getting_Started#comment-521">Re: Getting Started</a><br>7 weeks 1 day ago</li>
+<li><a href="http://www.mingw.org/wiki/MSYS#comment-507">Re: bug in MSYS-1.0.11.exe</a><br>12 weeks 6 days ago</li>
+<li><a href="http://www.mingw.org/wiki/MSYS#comment-506">bug in MSYS-1.0.11.exe</a><br>13 weeks 6 hours ago</li>
+<li><a href="http://www.mingw.org/wiki/MinGW#comment-496">Re: MinGW and Twilight Dragon media</a><br>16 weeks 2 days ago</li>
+<li class="last"><a href="http://www.mingw.org/wiki/FAQ#comment-484">Re: FAQ</a><br>18 weeks 6 days ago</li>
+</ul></div>    </div>
+    
+  </div>
+</div>
+        </div>
+      
+              <div id="sidebar-right" class="sidebar">
+          <div class="block block-block" id="block-block-1">
+  <div class="blockinner">
+
+    <h2 class="title"> Mail List Search </h2>
+    <div class="content">
+         <form method="post" action="http://sourceforge.net/search/">
+   <p>
+   <span class="small">Choose Mail List:</span>
+   <select name="forum_id">
+     <option selected="selected" value="5119">MinGW-users</option>
+     <option value="4855">MinGW-msys</option>
+     <option value="5123">MinGW-dvlpr</option>
+     <option value="5121">MinGW-notify</option>
+   </select>
+   </p><p>
+   <input name="type_of_search" value="mlists" type="hidden">
+   <input name="group_id" value="2435" type="hidden">
+   <input name="words" id="Words" type="text"><br>
+   <input name="exact" value="1" checked="checked" type="checkbox">
+         <span id="Label">Require all words?</span><br><br>
+   <input name="Search" value="Search" type="submit">
+   </p>
+   </form>
+    </div>
+    
+  </div>
+</div>
+<div class="block block-block" id="block-block-4">
+  <div class="blockinner">
+
+    <h2 class="title"> Powered by </h2>
+    <div class="content">
+      <a href="http://sourceforge.net/projects/mingw" target="_sfpage"><img src="HOWTO_Build_an_MSYS_Application_files/sflogo.png" alt="SourceForge Logo" width="88" border="0" height="31">  </a><br><a href="http://www.networkredux.com/"><img src="HOWTO_Build_an_MSYS_Application_files/NetworkRedux-140x31-3.png"></a><br><a href="http://drupal.org/"><img src="HOWTO_Build_an_MSYS_Application_files/powered-blue-80x15.png"></a><br>
+    </div>
+    
+  </div>
+</div>
+        </div>
+      
+    </div>
+
+    <div id="footer">
+      Copyright © 2009 - MinGW.org
+    </div>
+
+    
+        
+  </div>
+
+</body></html>

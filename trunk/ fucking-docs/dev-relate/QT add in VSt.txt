@@ -1,0 +1,1 @@
+将插件安装好后，进入VS，在菜单的Qt->option中，在Qt Versions中新建一个Qt version，将版本和目录添加进去后，在VS中即可以通过加载*.pro文件来导入QCreate插件的工程了。QT的版本以及目录可以从qmake的--version命令中获取，其中的路径要取上一层目录.

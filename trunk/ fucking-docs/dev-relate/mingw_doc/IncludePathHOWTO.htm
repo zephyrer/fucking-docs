@@ -1,0 +1,471 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xml:lang="en" xmlns="http://www.w3.org/1999/xhtml" lang="en"><head>
+
+
+
+  <title>HOWTO Specify the Header File Include Path for use with MinGW Compilers | MinGW</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <link type="text/css" rel="stylesheet" media="all" href="IncludePathHOWTO_files/aggregator.css">
+<link type="text/css" rel="stylesheet" media="all" href="IncludePathHOWTO_files/node.css">
+<link type="text/css" rel="stylesheet" media="all" href="IncludePathHOWTO_files/defaults.css">
+<link type="text/css" rel="stylesheet" media="all" href="IncludePathHOWTO_files/system.css">
+<link type="text/css" rel="stylesheet" media="all" href="IncludePathHOWTO_files/system-menus.css">
+<link type="text/css" rel="stylesheet" media="all" href="IncludePathHOWTO_files/user.css">
+<link type="text/css" rel="stylesheet" media="all" href="IncludePathHOWTO_files/logintoboggan.css">
+<link type="text/css" rel="stylesheet" media="all" href="IncludePathHOWTO_files/comment.css">
+<link type="text/css" rel="stylesheet" media="all" href="IncludePathHOWTO_files/style.css">
+    <script type="text/javascript"> </script>
+  </head><body id="second">
+  <div id="page" class="one-sidebar two-sidebars">
+  
+    <div id="header">
+    
+      <div id="logo-title">
+       
+                
+                  <h1 id="site-name">
+            <a href="http://www.mingw.org/" title="Home">
+              MinGW            </a>
+          </h1>
+                
+         
+          <div id="site-slogan">
+            Minimalist GNU for Windows          </div>
+                
+      </div>
+      
+      <div class="menu withprimarywithsecondary">
+                      <div id="primary" class="clear-block">
+              <ul class="links primary-links"><li class="menu-43 first"><a href="http://www.mingw.org/About" title="About MinGW">About</a></li>
+<li class="menu-66"><a href="http://www.mingw.org/wiki/MinGWiki" title="MinGW's New Wiki">Documentation</a></li>
+<li class="menu-63"><a href="http://www.mingw.org/tracker">Recent posts</a></li>
+<li class="menu-48 last"><a href="http://www.mingw.org/aggregator">Feed aggregator</a></li>
+</ul>            </div>
+                    
+                      <div id="secondary" class="clear-block">
+                      </div>
+                </div>
+      
+            
+    </div>
+
+    <div id="container" class="withleft withright clear-block">
+      
+      <div id="main-wrapper">
+      <div id="main" class="clear-block">
+        <div class="breadcrumb"><a href="http://www.mingw.org/">Home</a></div>                        <h1 class="title">HOWTO Specify the Header File Include Path for use with MinGW Compilers</h1>        <div class="tabs"><ul class="tabs primary">
+<li class="active"><a href="http://www.mingw.org/wiki/IncludePathHOWTO" class="active">View</a></li>
+<li><a href="http://www.mingw.org/node/73/revisions">Revisions</a></li>
+</ul>
+</div>                        <div class="node" id="node-73">
+  
+    
+  
+    <div class="meta with-taxonomy">
+  
+          <div class="submitted">Posted November 21st, 2008 by keith</div> 
+        
+     
+      <div class="taxonomy"><ul class="links inline"><li class="taxonomy_term_9 first"><a href="http://www.mingw.org/category/wiki/gcc" rel="tag" title="">gcc</a></li>
+<li class="taxonomy_term_3"><a href="http://www.mingw.org/category/wiki/how_to" rel="tag" title="">how to</a></li>
+<li class="taxonomy_term_57"><a href="http://www.mingw.org/category/wiki/include_path" rel="tag" title="">include path</a></li>
+<li class="taxonomy_term_13 last"><a href="http://www.mingw.org/category/wiki/msys" rel="tag" title="">msys</a></li>
+</ul></div>
+        
+  </div>
+    
+  <div class="content">
+    <p>FIXME: Page under construction; mostly complete now, but may need some clarifications.</p>
+<p>I will add to this as time permits; please bear with me. My intent
+is to provide answers to some remarkably similar, but independently
+asked, questions which have appeared recently, on the MinGW-Users and
+MinGW-MSYS lists.</p>
+<hr>
+<p>
+</p>
+<h4 id="toc0">Introduction</h4>
+<p>This Mini-HOWTO attempts to answer the FAQ: <em>"Why can't the MinGW compilers find my project's header files?"</em></p>
+<p>The <a href="http://gcc.gnu.org/onlinedocs/cpp/index.html#Top">CPP Section</a> of the <a href="http://gcc.gnu.org/onlinedocs/index.html#dir">GCC Manual</a> indicates that header files may be located in <a href="http://gcc.gnu.org/onlinedocs/cpp/Search-Path.html#Search-Path">the following directories</a>:--</p>
+<pre>On a normal Unix system, if you do not instruct it otherwise,
+[GCC] will look for headers requested with #include &lt;file&gt; in:
+
+     /usr/local/include
+     libdir/gcc/target/version/include
+     /usr/target/include
+     /usr/include
+
+For C++ programs, it will also look in /usr/include/g++-v3, first.</pre><p> Of course, the <a class="" style="" href="http://www.mingw.org/wiki/MinGW">MinGW</a> ports of GCC target Microsoft's Windows system, which is <em><strong>not</strong></em> a <em>"normal UNIX system"</em>.  Nevertheless, many users, particularly those coming from a UNIX or GNU/Linux background, and especially when they use <a class="" style="" href="http://www.mingw.org/wiki/MSYS">MSYS</a> to emulate a UNIX file system model on their MS-Windows hosts, are surprised to find that <a class="" style="" href="http://www.mingw.org/wiki/MinGW">MinGW</a>, using its default configuration, does <em><strong>not</strong></em> automatically search for header files in these directories.</p>
+<h4 id="toc1">MinGW's Default Include Path</h4>
+<p>So, if <a class="" style="" href="http://www.mingw.org/wiki/MinGW">MinGW</a> doesn't search in these <em>"normal"</em> directories, where <em><strong>does</strong></em> it search?</p>
+<p>Before answering this, it may be useful to understand <em>why</em> <a class="" style="" href="http://www.mingw.org/wiki/MinGW">MinGW</a>
+doesn't search in these directories. Firstly, on a native MS-Windows
+host, these directories do not typically exist; the multiply rooted
+nature of the file system means that such path names would be
+ambiguous. Secondly, since <a class="" style="" href="http://www.mingw.org/wiki/MinGW">MinGW</a> itself is <em>not</em> a suite of <a class="" style="" href="http://www.mingw.org/wiki/MSYS">MSYS</a> applications, even if such directories are created in the <a class="" style="" href="http://www.mingw.org/wiki/MSYS">MSYS</a> environment, <a class="" style="" href="http://www.mingw.org/wiki/MinGW">MinGW</a> would have no means to locate them.</p>
+<p>Thus, to avoid imposing draconian restrictions on how users install <a class="" style="" href="http://www.mingw.org/wiki/MinGW">MinGW</a>, the maintainers have chosen to adopt a restricted search paradigm, which is determined on the basis of where <a class="" style="" href="http://www.mingw.org/wiki/MinGW">MinGW</a> is itself installed.  The actual search path, for any specific installation of <a class="" style="" href="http://www.mingw.org/wiki/MinGW">MinGW</a> may be determined, by running the compiler itself, with the <em>"-v"</em> option; typically, for a GCC-3.4.5 installation in <em>c:/mingw</em>:--</p>
+<pre>$ touch foo.c bar.cpp
+
+$ gcc -v -c foo.c
+:
+#include "..." search starts here:
+#include &lt;...&gt; search starts here:
+ c:/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include
+ c:/mingw/bin/../lib/gcc/mingw32/3.4.5/include
+End of search list.
+:
+
+$ g++ -v -c bar.cpp
+:
+#include "..." search starts here:
+#include &lt;...&gt; search starts here:
+ c:/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/c++/3.4.5
+ c:/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/c++/3.4.5/mingw32
+ c:/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include/c++/3.4.5/backward
+ c:/mingw/bin/../lib/gcc/mingw32/3.4.5/../../../../include
+ c:/mingw/bin/../lib/gcc/mingw32/3.4.5/include
+End of search list.
+:</pre>
+<p>This raw format output, as displayed by the compilers, may be
+difficult for human readers to interpret. Thus, it may be helpful to
+reduce it to canonical path forms:--</p>
+<pre>$ gcc -v -c foo.c 2&gt;&amp;1 | sed ':1;s,/[^/.][^/]*/\.\./,/,;t 1'
+:
+#include "..." search starts here:
+#include &lt;...&gt; search starts here:
+ c:/mingw/include
+ c:/mingw/lib/gcc/mingw32/3.4.5/include
+End of search list.
+:
+
+$ g++ -v -c bar.cpp 2&gt;&amp;1 | sed ':1;s,/[^/.][^/]*/\.\./,/,;t 1'
+:
+#include "..." search starts here:
+#include &lt;...&gt; search starts here:
+ c:/mingw/include/c++/3.4.5
+ c:/mingw/include/c++/3.4.5/mingw32
+ c:/mingw/include/c++/3.4.5/backward
+ c:/mingw/include
+ c:/mingw/lib/gcc/mingw32/3.4.5/include
+End of search list.
+:</pre>
+<h4 id="toc2">Other Directories Searched by Default</h4>
+<p>The minimal list of directories, identified as described above, specifies the <em><strong>only</strong></em> locations which will be searched <em><strong>by default</strong></em>, for system header files or for headers associated with user installed libraries; however, there is <em><strong>one</strong></em>
+exception. Astute readers may have noticed that the include file search
+path is itemised in a pair of sequential lists, with the second being
+concatenated to the first; however, the first, identified as the <em>#include "..." search</em> list appears to be empty.  In reality, this apparent emptiness is possibly misleading; unless the user specifies the <em>"-I-"</em> option when invoking GCC, this list contains <em>exactly</em> one directory: the directory in which the source file containing the <em>#include "file"</em> directive resides.</p>
+<p>Notice that this one additional directory is <em><strong>not</strong></em> searched for headers specified with the <em>#include &lt;file&gt;</em> form of the <em>#include</em> directive; it applies only for those headers specified using the <em>#include "file"</em>
+form of the directive. Also note that the location of this additional
+directory is not fixed; it is dependent on the location of the source
+file being compiled, and, while unique for each individual source file,
+it may vary even within the compilation scope for any project, <em>and even within the scope of a single translation unit</em>, if multiple source files are distributed among different directories in the project's source hierarchy.</p>
+<p>To clarify this point, let us consider a trivial example. Suppose
+that we have a small project, which provides all of it's sources in a
+single directory; among them we might have:--</p>
+<pre>~/src
+   :
+   :--- bar.h
+   :
+   :--- foo.c
+   :--- foo.h
+   :</pre><p> Further suppose that <em>"foo.c"</em> <em>#include</em>s <em>"foo.h"</em>:--</p>
+<pre>/* foo.c
+ */
+ :
+#include "foo.h"
+ :</pre><p> and that <em>"foo.h"</em>, in turn, <em>#include</em>s <em>"bar.h"</em>:--</p>
+<pre>/* foo.h
+ */
+ :
+#include "bar.h"
+ :</pre><p> With this arrangement, we may create a build directory which is a sibling of <em>"src"</em>, and with that as current directory, we may compile <em>"foo.c"</em>:--</p>
+<pre>$ mkdir ~/build
+$ cd ~/build
+$ gcc -c ../src/foo.c
+$ </pre><p>
+and we might have every expectation that it will compile correctly; it
+certainly should have no problem finding the pair of header files, <em>"foo.h"</em> and <em>"bar.h"</em>.</p>
+<p>Now, suppose that the project grows, to such a size that we decide to separate our headers into a subdirectory of <em>"src"</em>:--</p>
+<pre>~/src
+   :
+   :--- foo.c
+   :
+   :--- hdr
+   :     :
+   :     :--- bar.h
+   :     :--- foo.h
+   :     :</pre>
+<p>After making this rearrangement, if we again try to compile <em>"foo.c"</em>, we will likely see errors resulting from the failure to locate the header file <em>"foo.h"</em>:--</p>
+<pre>$ gcc -c ../src/foo.c
+../src/foo.c:3:17: foo.h: No such file or directory
+ :
+$</pre><p> To correct this, we must also modify <em>"foo.c"</em>, to reflect the relocation of the header files:--</p>
+<pre>/* foo.c
+ */
+ :
+#include "hdr/foo.h"
+ :</pre><p> and this should be sufficient to again let us compile <em>"foo.c"</em> successfully:--</p>
+<pre>$ gcc -c ../src/foo.c
+$ </pre><p> Note here, that we did <em><strong>not</strong></em> make any corresponding change in <em>"bar.h"</em>; that would have been wrong!  The rule is that, in any <em>#include</em> directive of the form:--</p>
+<pre>#include "path/file"</pre><p> <em>path</em> must be a <em><strong>relative</strong></em> path, and it must be relative to the directory in which the file containing the pertinent <em>#include</em> directive is itself located.  In our example, since <em>"foo.h"</em> and <em>"bar.h"</em>
+are still in the same directory, searches for files included by either
+will commence in that same directory. If we had changed <em>"foo.h"</em>, in a manner similar to the change we made in <em>"foo.c"</em>, then <em>"foo.h"</em> would have attempted to <em>#include</em> the file <em>"~</em>/<em>src</em>/<em>hdr</em>/<em>hdr</em>/<em>bar.h"</em>, instead of the intended <em>"~</em>/<em>src</em>/<em>hdr</em>/<em>bar.h"</em>.</p>
+<h4 id="toc3">Including Headers from Directories which are Not Searched by Default</h4>
+<p>While the default header search paths may suffice for many simple
+projects, as project complexity grows, it will often become more
+convenient to collect header files into a central directory which is <em><strong>not</strong></em>
+in the default search path; this is particularly true of projects which
+provide, and possibly install, one or more function libraries, either
+exclusively for their own use, or maybe even for general use by other
+projects. In such cases, GCC must be <em><strong>explicitly</strong></em> notified, by specifying appropriate command line options, to identify the additional directories in which to search.</p>
+<p>The <a href="http://gcc.gnu.org/onlinedocs/index.html#dir">GCC Manual</a> documents several <a href="http://gcc.gnu.org/onlinedocs/gcc-3.4.5/gcc/Preprocessor-Options.html#Preprocessor-Options">options</a>, which may be used to specify directories to search for header files; of these, the most widely used is the <em>"-I DIR"</em>
+option. As an example of its use, let us reconsider the previous
+example, with the project source files organised within the hierarchy:--</p>
+<pre>~/src
+   :
+   :--- foo.c
+   :
+   :--- hdr
+   :     :
+   :     :--- bar.h
+   :     :--- foo.h
+   :     :</pre><p> but this time, we will <em><strong>not</strong></em> adapt <em>foo.c</em> to locate <em>foo.h</em> using the default include file search path:--</p>
+<pre>/* foo.c
+ */
+ :
+#include "foo.h"
+ :</pre>
+<p>As we saw previously, if we try to compile this unmodified <em>foo.c</em>, without explicitly specifying any header search path, the compilation will fail:--</p>
+<pre>$ gcc -c ../src/foo.c
+../src/foo.c:3:17: foo.h: No such file or directory
+ :
+$</pre>
+<p>Previously, we corrected this failure by modifying <em>foo.c</em>, to bring <em>foo.h</em> into the default <em>#include "..."</em> search path.  This time, we will correct it, not by modifying <em>foo.c</em>, but by <em><strong>explicitly</strong></em> adding our project's local <em>hdr</em> directory to the search path, when we invoke GCC to compile <em>foo.c</em>:--</p>
+<pre>$ gcc -I ../src/hdr -c ../src/foo.c
+$</pre><p> which, we may observe, again results in successful compilation.</p>
+<h4 id="toc4">Using Headers Provided with Locally Installed External Libraries</h4>
+<p>Many projects have dependencies on external libraries, which are <em>not</em> provided by a standard <a class="" style="" href="http://www.mingw.org/wiki/MinGW">MinGW</a>
+installation. Users who wish to build the applications provided by such
+projects must first install the appropriate prerequisite libraries.
+Such libraries are referred to as <em>"locally installed libraries"</em>, and they must be installed such that MinGW's GCC can readily locate both the libraries themselves, <em>and</em> any header files installed as prerequisites for specifying the interface to the library functions.</p>
+<p>The installation of such external libraries may be viewed as a
+challenge, for some users. Typically, and particularly in the case of
+library packages originally developed for Unix-like platforms, such
+libraries would be installed into the /<em>usr</em>/<em>local</em>/<em>...</em> directory hierarchy.  However, as we have seen above, <a class="" style="" href="http://www.mingw.org/wiki/MinGW">MinGW</a>'s
+GCC does not consider any such hierarchy in its default search paths,
+either for header files, or for libraries. Thus, the challenge is to
+choose an installation strategy which achieves a satisfactory
+compromise between:--
+</p><ol>
+<li>Installing directly into <a class="" style="" href="http://www.mingw.org/wiki/MinGW">MinGW</a>'s own standard <em>&lt;mingw-root&gt;</em>/<em>include</em> and <em>&lt;mingw-root&gt;</em>/<em>lib</em>
+directory hierarchies; this offers the advantage that the libraries,
+and their associated header files, are placed directly into <a class="" style="" href="http://www.mingw.org/wiki/MinGW">MinGW</a> GCC's default search paths, so there is no additional burden placed on the user, to add additional <em>"-I DIR"</em>
+options, throughout the build systems of any project using an external
+library. However, while perhaps being the simplest option, this
+strategy is not without disadvantages:--
+<ul>
+<li>The external library components are intermingled, within the file system hierarchy, with <a class="" style="" href="http://www.mingw.org/wiki/MinGW">MinGW</a>'s own standard components; it may not be straightforward to segregate them later, should this ever be necessary.</li>
+<li>Should the user wish to maintain <em>side-by-side</em> <a class="" style="" href="http://www.mingw.org/wiki/MinGW">MinGW</a>
+installations, at differing release point versions, say, then the
+external library installations will need to be duplicated, within each
+of the separate <a class="" style="" href="http://www.mingw.org/wiki/MinGW">MinGW</a> installation hierarchies.</li>
+<li>If the <a class="" style="" href="http://www.mingw.org/wiki/MinGW">MinGW</a>
+installation hierarchy is purged, in preparation for a clean
+re-installation, then any locally installed external libraries will
+also be purged, and if subsequently needed, will have to be reinstalled.</li>
+</ul>
+</li>
+<li>Creating a separate directory hierarchy, into which all external
+library packages are installed; this mitigates the disadvantages of
+option (1), but introduces its own drawbacks:--
+<ul>
+<li>The header files and libraries are no longer in <a class="" style="" href="http://www.mingw.org/wiki/MinGW">MinGW</a> GCC's default search paths; thus the user <em><strong>must</strong></em> make provision to pass the appropriate <em>"-I DIR"</em>, (and associated <em>"-L DIR"</em>), options to GCC, through his own projects' build systems. (This may be mitigated, in turn, by customising the <em><a class="" style="" href="http://www.mingw.org/wiki/SpecsFileHOWTO">GCC Specs File</a></em>, to supply the necessary options <em>automatically</em>, for <em>all</em> invocations of GCC, or by appropriately defining GCC's <em><a href="http://gcc.gnu.org/onlinedocs/cpp/Environment-Variables.html#Environment-Variables">CPATH</a></em> and <a href="http://gcc.gnu.org/onlinedocs/cpp/Environment-Variables.html#Environment-Variables">related environment variables</a>).</li>
+<li>Although now segregated from the <a class="" style="" href="http://www.mingw.org/wiki/MinGW">MinGW</a>
+standard library and header components, all external library packages
+are still intermixed, one with another, in a common installation
+hierarchy; nonetheless, this is often considered to be an acceptable
+compromise.</li>
+</ul>
+</li>
+<li>As a variation on option (2), create a separate directory hierarchy, for <em>each</em> and <em>every individual</em>
+external library package to be locally installed; this mitigates all of
+the disadvantages of option (1), and the package intermixing of option
+(2), but it incurs an alternative penalty:--
+<ul>
+<li>As with option (2), appropriate <em>"-I DIR"</em> and <em>"-L DIR"</em>
+options must be added to each GCC invocation; however, whereas option
+(2) requires only one additional path of each type, this option
+requires an additional one of each type, for <em>each</em> and <em>every</em> external library to be deployed.  (While this may still be achieved by appropriate customisation of the <em><a class="" style="" href="http://www.mingw.org/wiki/SpecsFileHOWTO">GCC Specs File</a></em>, or by appropriately specifying the <em><a href="http://gcc.gnu.org/onlinedocs/cpp/Environment-Variables.html#Environment-Variables">CPATH</a></em> and <a href="http://gcc.gnu.org/onlinedocs/cpp/Environment-Variables.html#Environment-Variables">related environment variables</a>, the additional complexity, and maintenance overhead, may be considered unacceptable to many users).</li>
+</ul>
+</li>
+</ol>
+
+  </div>
+  
+      <div class="links">
+      <ul class="links inline"><li class="comment_forbidden first"><span><a href="http://www.mingw.org/user/login?destination=comment/reply/73%2523comment-form">Login</a> or <a href="http://www.mingw.org/user/register?destination=comment/reply/73%2523comment-form">register</a> to post comments</span></li>
+<li class="statistics_counter last"><span>25713 reads</span></li>
+</ul>    </div>
+    
+</div>
+<div id="comments">
+  </div>
+              </div>
+      </div>
+      
+              <div id="sidebar-left" class="sidebar">
+          <form action="/wiki/IncludePathHOWTO" accept-charset="UTF-8" method="post" id="search-theme-form">
+<div><div id="search" class="container-inline">
+  <div class="form-item" id="edit-search-theme-form-1-wrapper">
+ <label for="edit-search-theme-form-1">Search this site: </label>
+ <input maxlength="128" name="search_theme_form" id="edit-search-theme-form-1" size="15" title="Enter the terms you wish to search for." class="form-text" type="text">
+</div>
+<input name="op" id="edit-submit" value="Search" class="form-submit" type="submit">
+<input name="form_build_id" id="form-7cfcdb3d5aa4d9525a4f7e18d83c4534" value="form-7cfcdb3d5aa4d9525a4f7e18d83c4534" type="hidden">
+<input name="form_id" id="edit-search-theme-form" value="search_theme_form" type="hidden">
+</div>
+
+</div></form>
+          <div class="block block-block" id="block-block-2">
+  <div class="blockinner">
+
+    <h2 class="title"> Administrative Update </h2>
+    <div class="content">
+      Thanks to <br><a href="http://www.networkredux.com/"><img src="IncludePathHOWTO_files/NetworkRedux-140x31-3.png"></a><br> As of March 4th, 2009 13:30 UTC we have a new hosting provider for our web portal.  Please consider giving <a href="http://www.networkredux.com/">NetworkRedux</a> your hosting business as a thank you to providing FOSS projects hosting solutions.     </div>
+    
+  </div>
+</div>
+<div class="block block-user" id="block-user-0">
+  <div class="blockinner">
+
+    <h2 class="title"> User login </h2>
+    <div class="content">
+      <a href="http://www.mingw.org/user/login?destination=node%2F73">Login/Register</a>    </div>
+    
+  </div>
+</div>
+<div class="block block-user" id="block-user-1">
+  <div class="blockinner">
+
+    <h2 class="title"> Navigation </h2>
+    <div class="content">
+      <ul class="menu"><li class="expanded first"><a href="http://www.mingw.org/About" title="About MinGW">About</a><ul class="menu"><li class="leaf first"><a href="http://www.mingw.org/contact">Contact</a></li>
+<li class="leaf"><a href="http://www.mingw.org/history" title="History">History</a></li>
+<li class="leaf"><a href="http://www.mingw.org/license" title="Licensing Terms">Licensing Terms</a></li>
+<li class="leaf"><a href="http://www.mingw.org/mailing_lists" title="Mailing Lists">Mailing Lists</a></li>
+<li class="leaf"><a href="http://www.mingw.org/privacy" title="Privacy">Privacy</a></li>
+<li class="leaf"><a href="http://www.mingw.org/bugs.shtml" title="Reporting Bugs">Reporting Bugs</a></li>
+<li class="leaf"><a href="http://www.mingw.org/wiki/SubmitPatches" title="How to submit patches">Submit Patches</a></li>
+<li class="leaf"><a href="https://sourceforge.net/project/showfiles.php?group_id=2435">Downloads</a></li>
+<li class="leaf last"><a href="http://www.mingw.org/sitemap.xml" title="Sitemap">Sitemap</a></li>
+</ul></li>
+<li class="collapsed"><a href="http://www.mingw.org/wiki/MinGWiki" title="MinGW's New Wiki">Documentation</a></li>
+<li class="leaf"><a href="http://www.mingw.org/tracker">Recent posts</a></li>
+<li class="collapsed last"><a href="http://www.mingw.org/aggregator">Feed aggregator</a></li>
+</ul>    </div>
+    
+  </div>
+</div>
+<div class="block block-user" id="block-user-3">
+  <div class="blockinner">
+
+    <h2 class="title"> Who's online </h2>
+    <div class="content">
+      There are currently <em>1 user</em> and <em>86 guests</em> online.<div class="item-list"><h3>Online users</h3><ul><li class="first last">chenhu</li>
+</ul></div>    </div>
+    
+  </div>
+</div>
+<div class="block block-statistics" id="block-statistics-0">
+  <div class="blockinner">
+
+    <h2 class="title"> Popular content </h2>
+    <div class="content">
+      <div class="item-list"><h3>Today's:</h3><ul><li class="first"><a href="http://www.mingw.org/wiki/HOWTO_Install_the_MinGW_GCC_Compiler_Suite">HOWTO Install the MinGW (GCC) Compiler Suite</a></li>
+<li><a href="http://www.mingw.org/wiki/MSYS">MSYS</a></li>
+<li><a href="http://www.mingw.org/wiki/Getting_Started">Getting Started</a></li>
+<li><a href="http://www.mingw.org/wiki/MinGWiki">MinGWiki</a></li>
+<li><a href="http://www.mingw.org/wiki/FAQ">FAQ</a></li>
+<li><a href="http://www.mingw.org/wiki/HOWTO">HOWTO</a></li>
+<li class="last"><a href="http://www.mingw.org/wiki/MinGW">MinGW</a></li>
+</ul></div><br><div class="item-list"><h3>All time:</h3><ul><li class="first"><a href="http://www.mingw.org/wiki/HOWTO_Install_the_MinGW_GCC_Compiler_Suite">HOWTO Install the MinGW (GCC) Compiler Suite</a></li>
+<li><a href="http://www.mingw.org/wiki/MSYS">MSYS</a></li>
+<li class="last"><a href="http://www.mingw.org/wiki/Getting_Started">Getting Started</a></li>
+</ul></div><br><div class="item-list"><h3>Last viewed:</h3><ul><li class="first"><a href="http://www.mingw.org/wiki/Use_the_thread_library">Use the thread library</a></li>
+<li><a href="http://www.mingw.org/node/27">HOWTO Compile with gcj</a></li>
+<li class="last"><a href="http://www.mingw.org/node/48">msysDTK</a></li>
+</ul></div>    </div>
+    
+  </div>
+</div>
+<div class="block block-comment" id="block-comment-0">
+  <div class="blockinner">
+
+    <h2 class="title"> Recent comments </h2>
+    <div class="content">
+      <div class="item-list"><ul><li class="first"><a href="http://www.mingw.org/wiki/Getting_Started#comment-538">Re: MinGW 5.1.6 Error: mismatched long filename</a><br>2 weeks 3 days ago</li>
+<li><a href="http://www.mingw.org/wiki/Getting_Started#comment-537">MinGW 5.1.6 Error: mismatched long filename</a><br>2 weeks 5 days ago</li>
+<li><a href="http://www.mingw.org/wiki/Getting_Started#comment-534">Re: Getting Started</a><br>4 weeks 21 hours ago</li>
+<li><a href="http://www.mingw.org/wiki/MinGW#comment-533">Re: MinGW and Twilight Dragon media</a><br>4 weeks 3 days ago</li>
+<li><a href="http://www.mingw.org/wiki/MinGW#comment-532">Re: MinGW and Twilight Dragon media</a><br>4 weeks 6 days ago</li>
+<li><a href="http://www.mingw.org/wiki/Getting_Started#comment-521">Re: Getting Started</a><br>7 weeks 1 day ago</li>
+<li><a href="http://www.mingw.org/wiki/MSYS#comment-507">Re: bug in MSYS-1.0.11.exe</a><br>12 weeks 6 days ago</li>
+<li><a href="http://www.mingw.org/wiki/MSYS#comment-506">bug in MSYS-1.0.11.exe</a><br>13 weeks 5 hours ago</li>
+<li><a href="http://www.mingw.org/wiki/MinGW#comment-496">Re: MinGW and Twilight Dragon media</a><br>16 weeks 2 days ago</li>
+<li class="last"><a href="http://www.mingw.org/wiki/FAQ#comment-484">Re: FAQ</a><br>18 weeks 6 days ago</li>
+</ul></div>    </div>
+    
+  </div>
+</div>
+        </div>
+      
+              <div id="sidebar-right" class="sidebar">
+          <div class="block block-block" id="block-block-1">
+  <div class="blockinner">
+
+    <h2 class="title"> Mail List Search </h2>
+    <div class="content">
+         <form method="post" action="http://sourceforge.net/search/">
+   <p>
+   <span class="small">Choose Mail List:</span>
+   <select name="forum_id">
+     <option selected="selected" value="5119">MinGW-users</option>
+     <option value="4855">MinGW-msys</option>
+     <option value="5123">MinGW-dvlpr</option>
+     <option value="5121">MinGW-notify</option>
+   </select>
+   </p><p>
+   <input name="type_of_search" value="mlists" type="hidden">
+   <input name="group_id" value="2435" type="hidden">
+   <input name="words" id="Words" type="text"><br>
+   <input name="exact" value="1" checked="checked" type="checkbox">
+         <span id="Label">Require all words?</span><br><br>
+   <input name="Search" value="Search" type="submit">
+   </p>
+   </form>
+    </div>
+    
+  </div>
+</div>
+<div class="block block-block" id="block-block-4">
+  <div class="blockinner">
+
+    <h2 class="title"> Powered by </h2>
+    <div class="content">
+      <a href="http://sourceforge.net/projects/mingw" target="_sfpage"><img src="IncludePathHOWTO_files/sflogo.png" alt="SourceForge Logo" width="88" border="0" height="31">  </a><br><a href="http://www.networkredux.com/"><img src="IncludePathHOWTO_files/NetworkRedux-140x31-3.png"></a><br><a href="http://drupal.org/"><img src="IncludePathHOWTO_files/powered-blue-80x15.png"></a><br>
+    </div>
+    
+  </div>
+</div>
+        </div>
+      
+    </div>
+
+    <div id="footer">
+      Copyright © 2009 - MinGW.org
+    </div>
+
+    
+        
+  </div>
+
+</body></html>
