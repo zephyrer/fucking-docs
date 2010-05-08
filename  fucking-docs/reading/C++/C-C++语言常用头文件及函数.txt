@@ -1,0 +1,304 @@
+C/C++头文件一觿/strong>
+
+
+C
+
+＃include <assert.h>　　　　//设定插入炿br> 
+＃include <ctype.h>　　　　 //字符处理
+＃include <errno.h>　　　　 //定义错误砿br> 
+＃include <float.h>　　　　 //浮点数处琿br> 
+＃include <iso646.h>        //对应各种运算符的宿br> 
+＃include <limits.h>　　　　//定义各种数据类型最值的常量
+＃include <locale.h>　　　　//定义本地化C函数
+＃include <math.h>　　　　　//定义数学函数
+＃include <setjmp.h>        //异常处理支持
+＃include <signal.h>        //信号机制支持
+＃include <stdarg.h>        //不定参数列表支持
+＃include <stddef.h>        //常用常量
+＃include <stdio.h>　　　　 //定义输入／输出函敿br> ＃include <stdlib.h>　　　　//定义杂项函数及内存分配函敿br> ＃include <string.h>　　　　//字符串处琿br> ＃include <time.h>　　　　　//定义关于时间的函敿br> ＃include <wchar.h>　　　　 //宽字符处理及输入／输凿br> ＃include <wctype.h>　　　　//宽字符分籿/p>
+
+传统C++
+
+＃include <fstream.h>　　　 //改用<fstream>
+＃include <iomanip.h>　　　 //改用<iomainip>
+＃include <iostream.h>　　　//改用<iostream>
+＃include <strstrea.h>　　　//该类不再支持，改甿lt;sstream>中的stringstream
+
+————————————————————————————————
+
+标准C++　
+
+＃include <algorithm>　　　 //STL 通用算法
+＃include <bitset>　　　　　//STL 位集容器
+＃include <cctype>          //字符处理
+＃include <cerrno> 　　　　 //定义错误砿br>
+＃include <cfloat>　　　　 //浮点数处琿br> 
+＃include <ciso646>         //对应各种运算符的宿br> 
+＃include <climits> 　　　　//定义各种数据类型最值的常量
+＃include <clocale> 　　　　//定义本地化函敿br> 
+＃include <cmath> 　　　　　//定义数学函数
+＃include <complex>　　　　 //复数籿br> 
+＃include <csignal>         //信号机制支持
+＃include <csetjmp>         //异常处理支持
+＃include <cstdarg>         //不定参数列表支持
+＃include <cstddef>         //常用常量
+＃include <cstdio> 　　　　 //定义输入／输出函敿br> 
+＃include <cstdlib> 　　　　//定义杂项函数及内存分配函敿br> 
+＃include <cstring> 　　　　//字符串处琿br> 
+＃include <ctime> 　　　　　//定义关于时间的函敿br> 
+＃include <cwchar> 　　　　 //宽字符处理及输入／输凿br> 
+＃include <cwctype> 　　　　//宽字符分籿br> 
+＃include <deque>　　　　　 //STL 双端队列容器
+＃include <exception>　　　 //异常处理籿br> 
+＃include <fstream> 　　　 //文件输入／输凿br> 
+＃include <al>　　　		//STL 定义运算函数（代替运算符＿br> 
+＃include <limits> 　　　　 //定义各种数据类型最值常釿br> 
+＃include <list>　　　　　　//STL 线性列表容噿br> 
+＃include <locale>          //本地化特定信恿br> 
+＃include <map>　　　　　　 //STL 映射容器
+＃include <memory>          //STL通过分配器进行的内存分配
+＃include <new>             //动态内存分酿br> 
+＃include <numeric>         //STL常用的数字操使br> 
+＃include <iomanip> 　　　 //参数化输入／输出
+＃include <ios>　　　　　　 //基本输入／输出支挿br> 
+＃include <iosfwd>　　　　　//输入／输出系统使用的前置声明
+＃include <iostream> 　　 　//数据流输入／输出
+＃include <istream>　　　　 //基本输入浿br> 
+＃include <iterator>        //STL迭代噿
+＃include <ostream>　　　　 //基本输出浿br> 
+＃include <queue>　　　　　 //STL 队列容器
+＃include <set>　　　　　　 //STL 集合容器
+＃include <sstream>　　　　 //基于字符串的浿br> 
+＃include <stack>　　　　　 //STL 堆栈容器
+＃include <stdexcept>　　　 //标准异常籿br> 
+＃include <streambuf>　　　 //底层输入／输出支挿br> 
+＃include <string>　　　　　//字符串类
+＃include <typeinfo>        //运行期间类型信息
+＃include <utility>　　　　 //STL 通用模板籿br> 
+＃include <valarray>        //对包含值的数组的操使br> 
+＃include <vector>　　　　　//STL 动态数组容噿/p>
+
+————————————————————————————————
+
+C99增加的部刿/p>
+
+＃include <complex.h>　　 //复数处理
+＃include <fenv.h>　　　　//浮点环境
+＃include <inttypes.h>　　//整数格式转换
+＃include <stdbool.h>　　 //布尔环境
+＃include <stdint.h>　　　//整型环境
+＃include <tgmath.h>　　　//通用类型数学宿/p>
+
+头文仿ctype.h
+字符处理函数: 本类别函数用于对单个字符进行处理，包括字符的类别测试和字符的大小写转捿br> ----------------------------------------
+字符测试是否字母和数孿isalnum
+是否字母 isalpha
+是否控制字符 iscntrl
+是否数字 isdigit
+是否可显示字笿除空格外) isgraph
+是否可显示字笿包括空格) isprint
+是否既不是空格，又不是字母和数字的可显示字符 ispunct
+是否空格 isspace
+是否大写字母 isupper
+是否16进制数字(0＿，A-F)字符 isxdigit
+字符大小写转换函敿转换为大写字毿toupper
+转换为小写字毿tolower
+
+头文仿local.h
+地区匿 本类别的函数用于处理不同国家的语言差异?br> ----------------------------------------
+地区控制 地区设置 setlocale
+数字格式约定查询 国家的货币、日期、时间等的格式转捿localeconv
+
+
+
+头文仿math.h
+数学函数: 本分类给出了各种数学计算函数，必须提醒的是ANSI C标准中的数据格式并不符合IEEE754标准，一些C语言编译器却遵循IEEE754(例如frinklin C51)
+----------------------------------------
+
+反余弿acos
+反正弿asin
+反正刿atan
+反正刿 atan2
+余弦 cos
+正弦 sin
+正切 tan
+
+双曲余弦 cosh
+双曲正弦 sinh
+双曲正切 tanh
+
+指数函数 exp
+指数分解函数 frexp
+乘积指数函数 fdexp
+自然对数 log
+仿0为底的对敿log10
+浮点数分解函敿modf
+
+幂函敿pow
+平方根函敿sqrt
+
+求下限接近整敿ceil
+绝对倿fabs
+求上限接近整敿floor
+求余敿fmod
+
+
+
+头文仿setjmp.h io.h
+本分类函数用于实现在不同底函数之间直接跳转代码?
+----------------------------------------
+保存调用环境 setjmp
+恢复调用环境 longjmp
+
+头文仿signal.h
+信号处理: 该分类函数用于处理那些在程序执行过程中发生例外的情况?br> ----------------------------------------
+指定信号处理函数 signal
+发送信叿raise
+
+
+头文仿stdarg.h
+可变参数处理: 本类函数用于实现诸如printf,scanf等参数数量可变底函数?br> ----------------------------------------
+可变参数访问宿
+可变参数开始宏 va_start
+可变参数结束宿va_end
+可变参数访问宿访问下一个可变参数宏 va_arg
+
+
+头文仿stdio.h
+输入输出函数:该分类用于处理包括文件、控制台等各种输入输出设备，各种函数仿ldquo;浿rdquo;的方式实玿br> ----------------------------------------
+删除文件 remove
+修改文件名称 rename
+生成临时文件名称 tmpfile
+得到临时文件路径 tmpnam
+文件访问 关闭文件 fclose
+刷新缓冲匿fflush
+打开文件 fopen
+将已存在的流指针和新文件连接 freopen
+设置磁盘缓冲匿setbuf
+设置磁盘缓冲匿setvbuf
+
+格式化输入与输出函数
+格式输出 fprintf
+格式输入 fscanf
+格式输出(控制叿 printf
+格式输入(控制叿 scanf
+格式输出到缓冲区 sprintf
+从缓冲区中按格式输入 sscanf
+格式化输凿vfprintf
+格式化输凿vprintf
+格式化输凿vsprintf
+
+字符输入输出函数
+输入一个字笿fgetc
+字符串输兿fgets
+字符输出 fputc
+字符串输凿fputs
+字符输入(控制叿 getc
+字符输入(控制叿 getchar
+字符串输兿控制叿 gets
+字符输出(控制叿 putc
+字符输出(控制叿 putchar
+字符串输凿控制叿 puts
+字符输出到流的头郿ungetc
+
+直接输入输出
+直接流读操作 fread
+直接流写操作 fwrite
+
+文件定位函数
+得到文件位置 fgetpos
+文件位置移动 fseek
+文件位置设置 fsetpos
+得到文件位置 ftell
+文件位置复零使remind
+
+错误处理函数
+错误清除 clearerr
+文件结尾判断 feof
+文件错误检浿ferror
+得到错误提示字符丿perror
+
+头文仿stdlib.h
+实用工具函数: 本分类给出了一些函数无法按以上分类，但又是编程所必须要的?br> ----------------------------------------
+字符串转换函敿
+字符串转换为整数 atoi
+字符串转换为长整敿atol
+字符串转换为浮点敿strtod
+字符串转换为长整敿strtol
+字符串转换为无符号长整型 strtoul
+
+伪随机序列产生函敿
+产生随机敿rand
+设置随机函数的起动数倿srand
+
+存储管理函数
+分配存储噿calloc
+释放存储噿free
+存储器分酿malloc
+重新分配存储噿realloc
+
+环境通信
+中止程序 abort
+退出程序执行，并清除环境变釿atexit
+退出程序执衿exit
+读取环境参数 getenv
+程序挂起，临时执行一个其他程庿system
+搜索和排序工兿二分查找(数据必须已排庿 bsearch
+快速排庿qsort
+整数运算函数 求绝对倿abs
+得到除法运算底商和余敿div
+求长整形底绝对倿labs
+求长整形除法的商和余敿ldiv
+多字节字符函敿得到多字节字符的字节敿mblen
+得到多字节字符的字节敿mbtowc
+多字节字符转捿wctomb
+多字节字符的字符串操使将多字节串转换为整数数组 mbstowcs
+将多字节串转换为字符数组 mcstowbs
+
+头文仿string.h
+字符串处琿 本分类的函数用于对字符串进行合并、比较等操作
+----------------------------------------
+字符串拷贿块拷贿目的和源存储区不可重叿 memcpy
+块拷贿目的和源存储区可重叠) memmove
+串拷贿strcpy
+按长度的串拷贿strncpy
+字符串连接函敿串连掿strcat
+按长度连接字符串 strncat
+串比较函敿块比辿memcmp
+字符串比辿strcmp
+字符串比辿用于非英文字笿 strcoll
+按长度对字符串比辿strncmp
+字符串转捿strxfrm
+字符与字符串查找 字符查找 memchr
+字符查找 strchr
+字符串查承strcspn
+字符串查承strpbrk
+字符串查承strspn
+字符串查承strstr
+字符串分觿strtok
+杂类函数 字符串设罿memset
+错误字符串映尿strerror
+求字符串长度 strlen
+
+头文仿time.h
+日期和时间函敿 本类别给出时间和日期处理函数
+----------------------------------------
+时间操作函数得到处理器时闿clock
+得到时间巿difftime
+设置时间 mktime
+得到时间 time
+时间转换函数 得到以ASCII码表示的时间 asctime
+得到字符串表示的时间 ctime
+得到指定格式的时闿strftime
+
+
+序号 库类刿头文仿
+----------------------------------------
+1 错误处理 errno.h
+2 字符处理 ctyphe.
+3 地区匿local.h
+4 数学函数 math.h
+5 信号处理 signal.h
+6 输入输出 stdio.h
+7 实用工具程序 stdlib.h
+8 字符串处琿string.h

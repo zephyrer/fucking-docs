@@ -1,0 +1,40 @@
+(custom-set-variables
+  ;; custom-set-variables was added by Custom.
+  ;; If you edit it by hand, you could mess it up, so be careful.
+  ;; Your init file should contain only one such instance.
+  ;; If there is more than one, they won't work right.
+ '(inhibit-startup-screen t))
+(custom-set-faces
+  ;; custom-set-faces was added by Custom.
+  ;; If you edit it by hand, you could mess it up, so be careful.
+  ;; Your init file should contain only one such instance.
+  ;; If there is more than one, they won't work right.
+ )
+(set-background-color "black")
+(set-foreground-color "white")
+(line-number-mode 1)
+(column-number-mode 1)
+(set-default-font "Courier 10 Pitch-8")
+(global-font-lock-mode t)
+(setq font-lock-maximum-size nil)
+(setq auto-mode-alist
+  (append '(
+    ("configure.in" . m4-mode)
+    ("\\.m4\\'" . m4-mode)
+    ("\\.am\\'" . makefile-mode))
+  auto-mode-alist))
+
+;; Navigating source code
+(add-hook 'dired-load-hook (function (lambda () (load "dired-x"))))
+(setq dired-omit-files-p t)
+(global-set-key [f1] 'dired)
+(global-set-key [f2] 'dired-omit-toggle)
+(global-set-key [f3] 'shell)
+(global-set-key [f4] 'find-file)
+(global-set-key [f5] 'compile)
+(global-set-key [f6] 'visit-tags-table)
+(global-set-key [f8] 'add-change-log-entry-other-window)
+(global-set-key [f12] 'make-frame)
+
+;; use viper
+(add-hook 'compilation-mode-hook 'viper-change-state-to-emacs)

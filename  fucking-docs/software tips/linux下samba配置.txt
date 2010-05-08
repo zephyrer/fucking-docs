@@ -1,0 +1,30 @@
+对于redhat默认安装的samba:
+#备份原始samba配置文件
+[root@localhost ~]#  cd /etc/samba
+[root@localhost ~]#  mv smb.conf smb.confBAK
+#新建samba配置文件
+[root@localhost ~]#  touch smb.conf
+#编辑之
+[root@localhost ~]#  vi smb.conf
+
+[global]
+workgroup = LinuxSir
+netbios name = LinuxSir05
+server string = Linux Samba Server TestServer
+security = share
+
+[linuxsir]
+        path = /opt/linuxsir		#共享目录
+        writeable = yes			#写权限
+        browseable = yes		#浏览权限
+        guest ok = yes			#任何人可以访问
+
+#启动samba
+[root@localhost ~]#  smbd
+[root@localhost ~]#  nmbd
+
+#查看进程，看其是否启动
+[root@localhost ~]#  pgrep smbd
+
+到linux文件目录先，如果你想使得/home目录可写，那么点击属性，开放其所有权限。这样，在windows中，你就可以不用密码来『读写』linux的文件了
+

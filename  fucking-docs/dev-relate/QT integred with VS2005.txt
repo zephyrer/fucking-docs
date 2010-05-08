@@ -1,0 +1,83 @@
+[from http://stackoverflow.com]
+These are the steps I followed to get it running in VS2005 and it has been working always for me...
+
+   1. Get the version you want from ftp://ftp.qt.nokia.com/qt/source/
+   2. Extract it to any of your drives. One thing to note is to extract it to a location which has no spaces... (moc sometimes has a problem handling this...) (e.g: "c:\drive\qt\4.5.x" is ok. but "c:\drive qt 4.5.x" is not ok)
+   3. Open cmd prompt and run "VS Installation Path\VC\vcvarsall.bat" or open your "VS cmd" prompt.
+   4. Go to c:\drive\qt\4.5.x
+   5. Run configure.exe (say yes to everything..)
+   6. Run nmake
+
+[]
+How to: Setup Qt 4.5 Visual Studio Integration
+QT 4.5 IS NOW RELEASED UNDER LPGL
+Earlier this week, Nokia (who acquired Trolltech) released Qt 4.5, a cross platform GUI toolkit.  This is the first time it is available under an LPGL license, meaning you can use it free of charge to develop proprietary, commercial, closed-source software.  Instantly, Qt has become available to a wide audience of software developers (DCSoft included).  Thank you Nokia!
+For the past several months, DCSoft has been very interested in Qt.  Much as we love MFC, it hasn¡¯t changed much since 1999, and this is 2009.  Qt is easy to learn given its concise syntax and documentation, plugs into Visual Studio (more below), comes with a supported toolset including Designer (a resource editor), Linguist (a localization tool), and Qt Creator (an IDE), giving Qt more momentum than MFC, and a higher performance alternative to .NET.  It¡¯s easily one of the best ways to create Windows apps, never mind it can also target Mac, Linux, and several embedded devices.
+ 
+
+However, the current LPGL release leaves some gaps in using Qt from within Visual Studio 2005/2008.  It¡¯s not obvious how to do that with what you can download from  http://www.qtsoftware.com/downloads.  This is somewhat understandable given that Visual Studio integration was a commercial-only offering (you had to pay to get it), and Nokia is also heavily promoting Qt Creator (and not Visual Studio) as the ideal environment in which to develop Qt apps.  The problem with Qt Creator (and I haven¡¯t used it at all) is that it relies on the MingGW (gcc) compiler which is nowhere near as good as VC++.  Besides, it is unfamiliar to those of us who have Visual Studio already setup the way we like it.
+ 
+
+Here¡¯s how to get our favorite IDE (Visual Studio 2005/2008) working with Qt!
+ 
+
+BUILD VC++ VERSION OF QT
+
+1.  Download and install qt-sdk-win-opensource-2009.01.exe.  Install into the default c:\qt\2009.01.  It contains MingGW (the gcc toolset for Windows) and Qt Creator, and pre-built binaries built by GCC.  You can use this installation as-is if you want to experiment with Qt Creator.
+
+2.  Copy the entire folder of c:\qt\2009.01 to c:\qt\4.5.0-vc.  We will be modifying c:\qt\4.5.0-vc to build the libraries with VC++.  Both directories can co-exist.  Use the c:\qt\2009.01 with Qt Creator, and use c:\qt\4.5.0-vc with Visual Studio.  (We will see how to use it in Visual Studio later).
+
+3.  Open a command prompt and run Configure to target platform win32-msvc2005 (substitute win32-msvc2008 for VC2008): 
+                c:\> cd c:\qt\4.5.0-vc\qt
+
+                c:\qt\4.5.0-vc\qt> configure -no-sql-sqlite -no-qt3support -no-opengl -platform win32-msvc2005 -no-libtiff -no-dbus -no-phonon -no-phonon-backend -no-webkit
+ 
+
+In the above command-line, change the Configure command-line parameters as desired, but be sure to specify -platform to target the desired Visual Studio toolset.  Run Configure with no parameters to see a help screen.  Configure generates nmake compatible makefiles to build all the libraries.
+
+4.  Run "nmake" to build.  NOTE:  You may need to execute Visual Studio's VCVARS32.BAT (located in e.g. "C:\Program Files\VS2005\VC\bin") to setup the environment (such as path) to find the VC++ tools like nmake, etc. 
+
+5.  It will take awhile, but this grinds through building the specified Qt DLL's and libs with Visual Studio. 
+
+INSTALL VISUAL STUDIO PLUG-IN 
+
+1.  Download and install qt-vs-addin-1.0.0-beta.exe to install the Qt plug-in into VS 2005 SP1.  You will receive a message:
+
+                No installed Qt package has been detected.
+
+                Please make sure that Qt is installed before using the Qt4 Visual Studio
+
+                Add-in
+
+Click OK, and the Install will proceed anyway.  The message is not a concern, because we will later point the plug-in to the c:\qt\4.5.0-vc we copied in Step 1.  The message is saying there are no Visual Studio-specific installations of Qt, which is true, but it¡¯s not our fault Nokia doesn¡¯t provide it, now is it?
+
+         Edit March 23, 2009:  There is a new Beta 2 download that no longer displays this message.
+
+2.  Edit environment variables to add 
+
+                 QTDIR = f:\qt\4.5.0-vc\qt 
+
+This is done by opening Computer Properties, Advanced system settings, Environment Variables. 
+
+3.  Reboot the computer to make the new environment variable take effect. 
+
+4.  Start VC2005.
+
+5.  Select menu Qt | Configure Qt Versions.  Add c:\qt\4.5.0-vc\qt. 
+
+6.  Now Qt is fully functional, and you can use VS2005 to build Qt apps.
+
+QT IN VISUAL STUDIO 
+
+1.  See Qt menu item.  Launch Qt Designer (the Resource editor) and Qt Linguist (the localization tool). 
+ 
+2.  Create new Qt projects.  File | New project, select Qt4 project.
+
+3.  Read Qt Help.  Available from Help menu (Qt help is merged in with Visual Studio Help and viewed in Document Explorer.)  Or, manually launch
+
+                C:\Qt\4.5.0-vc\qt\bin\assistant_adp.exe
+
+4.  Note:  the LPGL version of the Qt Visual Studio Integration is a stripped down version of the Commercial version (which you have to pay Qt lots of $ to purchase).  Specifically, the LPGL version does not embed the Qt Designer into Visual Studio.  Instead, it launches an external version.  This is still highly usable, but different.
+
+5.  The Whole Tomato Visual Assist X plug-in is highly recommended to develop Qt within Visual Studio.  See this blog entry for tips.
+

@@ -1,0 +1,24 @@
+
+
+刚装的英文版Windows XP操作系统，不能正确显示中文和输入中文，解决方法如下：
+
+一、微软在Windows XP操作系统中不但提供了简、繁体中文字库，而且提供了相应的输入法支持。如果你要启用英文版Windows XP操作系统对中文的支持，可参考如下的方式设置（以英文版Windows XP Professional为例，Windows XP Home Edition的设置方法与此类似）。
+
+1. 打开“control panel”，双击“Regional and Language Options”图标，打开区域和语言设置窗口；
+
+2. 在区域和语言设置窗口中，选择“Language”选项卡，将“Install Files for East Asian Languages” 选项打勾；
+
+3. 系统提示需要约230MB的空间，请选择确定并根据提示操作，成功后返回到“Regional Options” 页中；
+
+4. 在“Regional Options”选项卡中的“Standards and Formats”下拉框中选择“Chinese (PRC)”使用中文格式，“Location”下拉框中选择“China”，表示当前所属区域为中国；
+
+5. 在“Language”选项卡中单击“Details”按钮，在“Settings”中的“Default input language”下拉框中选择“Chinese （PRC）-Chinese（Simplified）-US Keyboard”，并且在“Install Serivces”中点击“Add”按钮即可添加中文输入法。
+
+二、中文软件界面乱码问题解决。
+ 有些中文软件的界面会显示为乱码，即使你已经如2安装了东亚语言支持。其原因为这些中文软件的界面文字采用了non-Unicode编码，而英文版Windows XP默认对于这样的编码是采用英文显示。你可以在Start -> Control Panel -> Regional and Language Options -> Advanced 中在"Language for non-unicode programs"下拉菜单中选择"Chinese PRC"。即可解决。
+
+三、中文输入法安装。
+ 英文版Windows XP自带了几种中文输入法。如微软拼音3.0, 全拼，双拼，郑码。这样安装：Start -> Control Panel -> Regional and Language Options -> Language 中点""Details"按钮，会弹出"Text Service and Input Languages"页面。在Settings中点"Add"按钮。选择"Input language" 为Chinese PRC。然后在"keyboard layout/IME"选择以 Chinese (Simplified)开头的几个即是简体中文输入法。
+ Chinese (Simplified) - Microsoft Pinyin IME 3.0: 微软拼音3.0
+ Chinese (Simplified) - NeiMa: 内码输入法
+ Chinese (Simplified) - QuanPin: 全拼输入法 
